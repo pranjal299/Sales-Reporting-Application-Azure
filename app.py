@@ -15,13 +15,25 @@ def index():
     return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
-def upload_file_to_blob():
-    file = request.files['file']
-    if file:
-        blob_client = blob_service_client.get_blob_client(container=CONTAINER_NAME, blob=file.filename)
-        blob_client.upload_blob(file)
-        return 'File successfully uploaded!'
-    return 'No file selected for uploading'
+def upload_files_to_blob():
+    uploaded_files = [
+        request.files.get('products'),
+        request.files.get('employees'),
+        request.files.get('customers'),
+        request.files.get('payments'),
+        request.files.get('transactions')
+    ]
+    
+    messages = []
+    for file in uploaded_files:
+        if file:
+            blob_client = blob_service_client.get_blob_client(container=CONTAINER_NAME, blob=file.filename)
+            blob_client.upload_blob(file)
+            messages.append(f'Successfully uploaded {file.filename}!')
+        else:
+            messages.append('A required file was missing.')
+    
+    return '<br>'.join(messages)
 
 if __name__ == '__main__':
     app.run(debug=True)

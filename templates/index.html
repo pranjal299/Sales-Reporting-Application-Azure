@@ -2,12 +2,43 @@
 <html>
 <head>
     <title>Upload to Azure Blob Storage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            margin: auto;
+            width: 50%;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .upload-form {
+            margin-top: 20px;
+        }
+        .upload-form input[type=file] {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload File to Azure Blob Storage</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <input type="submit" value="Upload">
-    </form>
+    <div class="container">
+        <h1>Upload Dimension and Fact Tables</h1>
+        <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="products" required><br>
+            <input type="file" name="employees" required><br>
+            <input type="file" name="customers" required><br>
+            <input type="file" name="payments" required><br>
+            <input type="file" name="transactions" required><br>
+            <input type="submit" value="Upload Tables">
+        </form>
+    </div>
 </body>
 </html>
