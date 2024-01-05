@@ -1,52 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload to Azure Blob Storage</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
             background-color: white;
-            padding: 20px;
-            margin: auto;
-            width: 50%;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            max-width: 500px;
+            width: 100%;
         }
         h1 {
             color: #333;
+            text-align: center;
+            margin-bottom: 30px;
         }
-        .upload-form {
-            margin-top: 20px;
+        form {
+            display: flex;
+            flex-direction: column;
         }
-        .upload-form input[type=file] {
-            margin-bottom: 10px;
+        .form-group {
+            margin-bottom: 15px;
         }
-        .upload-label {
-            margin-right: 10px;
-            font-weight: bold;
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .form-group input[type="file"] {
+            display: block;
+            width: 100%;
+        }
+        .form-group input[type="submit"] {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .form-group input[type="submit"]:hover {
+            background-color: #4cae4c;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Upload Dimension and Fact Tables</h1>
-        <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-            <label class="upload-label" for="products">Products Dimension Table:</label>
-            <input type="file" name="products" id="products" required><br>
-            <label class="upload-label" for="employees">Employees Dimension Table:</label>
-            <input type="file" name="employees" id="employees" required><br>
-            <label class="upload-label" for="customers">Customers Dimension Table:</label>
-            <input type="file" name="customers" id="customers" required><br>
-            <label class="upload-label" for="payments">Payments Dimension Table:</label>
-            <input type="file" name="payments" id="payments" required><br>
-            <label class="upload-label" for="transactions">Transactions Fact Table:</label>
-            <input type="file" name="transactions" id="transactions" required><br>
-            <input type="submit" value="Upload Tables">
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="products">Products Dimension Table:</label>
+                <input type="file" name="products" id="products" required>
+            </div>
+            <div class="form-group">
+                <label for="employees">Employees Dimension Table:</label>
+                <input type="file" name="employees" id="employees" required>
+            </div>
+            <div class="form-group">
+                <label for="customers">Customers Dimension Table:</label>
+                <input type="file" name="customers" id="customers" required>
+            </div>
+            <div class="form-group">
+                <label for="payments">Payments Dimension Table:</label>
+                <input type="file" name="payments" id="payments" required>
+            </div>
+            <div class="form-group">
+                <label for="transactions">Transactions Fact Table:</label>
+                <input type="file" name="transactions" id="transactions" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Upload Tables">
+            </div>
         </form>
     </div>
 </body>
