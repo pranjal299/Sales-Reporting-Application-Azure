@@ -26,17 +26,26 @@
         .upload-form input[type=file] {
             margin-bottom: 10px;
         }
+        .upload-label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Upload Dimension and Fact Tables</h1>
         <form class="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="products" required><br>
-            <input type="file" name="employees" required><br>
-            <input type="file" name="customers" required><br>
-            <input type="file" name="payments" required><br>
-            <input type="file" name="transactions" required><br>
+            <label class="upload-label" for="products">Products Dimension Table:</label>
+            <input type="file" name="products" id="products" required><br>
+            <label class="upload-label" for="employees">Employees Dimension Table:</label>
+            <input type="file" name="employees" id="employees" required><br>
+            <label class="upload-label" for="customers">Customers Dimension Table:</label>
+            <input type="file" name="customers" id="customers" required><br>
+            <label class="upload-label" for="payments">Payments Dimension Table:</label>
+            <input type="file" name="payments" id="payments" required><br>
+            <label class="upload-label" for="transactions">Transactions Fact Table:</label>
+            <input type="file" name="transactions" id="transactions" required><br>
             <input type="submit" value="Upload Tables">
         </form>
     </div>
