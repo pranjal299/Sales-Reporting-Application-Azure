@@ -5,8 +5,8 @@ import os
 app = Flask(__name__)
 
 # Azure Storage Account settings
-CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=dbprojectstorage;AccountKey=AkeELxf+2c4xT/jqAUDGI+fOD4wuU0iwb6H6ndJy+E2b56U4YMKC0540qwhTPp+oBUt1AyEP/TKo+AStNS1tNA==;EndpointSuffix=core.windows.net'
-CONTAINER_NAME = 'webappstorage'
+CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesrepstorageacc;AccountKey=7VFqRFCzw+o5Dg4iTmFcClNkhDndSTNGKE1YcdFlVhxbrWP/q0JWOS4VDZvgVezQLcw8WK4KEj7I+ASts2Kh/A==;EndpointSuffix=core.windows.net'
+CONTAINER_NAME = 'salesrepcontainer'
 
 blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
 
