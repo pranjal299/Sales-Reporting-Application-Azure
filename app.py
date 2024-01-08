@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Azure Storage Account settings
 CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesrepstorageacc;AccountKey=7VFqRFCzw+o5Dg4iTmFcClNkhDndSTNGKE1YcdFlVhxbrWP/q0JWOS4VDZvgVezQLcw8WK4KEj7I+ASts2Kh/A==;EndpointSuffix=core.windows.net'
-CONTAINER_NAME = 'salesrepcontainerlocal'
+CONTAINER_NAME = 'salesrepcontainer'
 
 blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
 
