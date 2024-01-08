@@ -58,12 +58,16 @@
         .form-group input[type="submit"]:hover {
             background-color: #4cae4c;
         }
+        progress {
+            width: 100%;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Upload Dimension and Fact Tables</h1>
-        <form action="/upload" method="post" enctype="multipart/form-data">
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="products">Products Dimension Table:</label>
                 <input type="file" name="products" id="products" required>
@@ -84,10 +88,36 @@
                 <label for="transactions">Transactions Fact Table:</label>
                 <input type="file" name="transactions" id="transactions" required>
             </div>
+            <progress id="progressBar" value="0" max="100"></progress>
             <div class="form-group">
                 <input type="submit" value="Upload Tables">
             </div>
         </form>
     </div>
+    <script>
+        document.getElementById('uploadForm').onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload', true);
+
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    var percentComplete = (e.loaded / e.total) * 100;
+                    document.getElementById('progressBar').value = percentComplete;
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert('Upload complete!');
+                } else {
+                    alert('An error occurred during the upload.');
+                }
+            };
+
+            xhr.send(formData);
+        };
+    </script>
 </body>
 </html>
