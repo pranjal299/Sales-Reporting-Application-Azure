@@ -62,11 +62,32 @@
             width: 100%;
             margin-bottom: 15px;
         }
+        .drag-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .drag-area.highlight {
+            border-color: #5cb85c;
+            background-color: #f0fff0;
+        }
+        #toast-container > .toast-success {
+            background-color: #51A351;
+        }
+        #toast-container > .toast-error {
+            background-color: #BD362F;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Upload Dimension and Fact Tables</h1>
+        <div id="dragWrapper" class="drag-area">
+            <p>Drag and drop files here</p>
+            <p><small>(Or use the 'Choose File' buttons below for each table)</small></p>
+        </div>
         <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="products">Products Dimension Table:</label>
@@ -94,8 +115,58 @@
             </div>
         </form>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        document.getElementById('uploadForm').onsubmit = function(event) {
+        var uploadForm = document.getElementById('uploadForm');
+        var dragWrapper = document.getElementById('dragWrapper');
+        var progressBar = document.getElementById('progressBar');
+        var submitButton = uploadForm.querySelector('input[type="submit"]');
+
+        dragWrapper.ondragover = dragWrapper.ondragenter = function(event) {
+            event.preventDefault();
+            dragWrapper.classList.add('highlight');
+        };
+
+        dragWrapper.ondragleave = function() {
+            dragWrapper.classList.remove('highlight');
+        };
+
+        dragWrapper.ondrop = function(event) {
+            event.preventDefault();
+            dragWrapper.classList.remove('highlight');
+            
+            var files = event.dataTransfer.files;
+            Array.from(files).forEach(file => {
+                // Example of how you could determine the input field based on file extension
+                var input;
+                if (file.name.endsWith('.csv')) {
+                    if (file.name.toLowerCase().includes('product')) {
+                        input = uploadForm.querySelector('input[name="products"]');
+                    } else if (file.name.toLowerCase().includes('employee')) {
+                        input = uploadForm.querySelector('input[name="employees"]');
+                    } else if (file.name.toLowerCase().includes('customer')) {
+                        input = uploadForm.querySelector('input[name="customers"]');
+                    } else if (file.name.toLowerCase().includes('payment')) {
+                        input = uploadForm.querySelector('input[name="payments"]');
+                    } else if (file.name.toLowerCase().includes('transaction')) {
+                        input = uploadForm.querySelector('input[name="transactions"]');
+                    }
+                }
+                
+                if (input) {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    input.files = dataTransfer.files;
+                }
+            });
+
+            // Check if all required fields have files to enable the submit button
+            var allFilesAdded = Array.from(uploadForm.querySelectorAll('input[type="file"]')).every(input => input.files.length > 0);
+            submitButton.disabled = !allFilesAdded;
+        };
+
+
+        uploadForm.onsubmit = function(event) {
             event.preventDefault();
             var formData = new FormData(this);
             var xhr = new XMLHttpRequest();
@@ -104,16 +175,17 @@
             xhr.upload.onprogress = function(e) {
                 if (e.lengthComputable) {
                     var percentComplete = (e.loaded / e.total) * 100;
-                    document.getElementById('progressBar').value = percentComplete;
+                    progressBar.value = percentComplete;
                 }
             };
 
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    alert('Upload complete!');
+                    toastr.success('Upload complete!');
                 } else {
-                    alert('An error occurred during the upload.');
+                    toastr.error('An error occurred during the upload.');
                 }
+                submitButton.disabled = true; // Disable the submit button after upload
             };
 
             xhr.send(formData);
