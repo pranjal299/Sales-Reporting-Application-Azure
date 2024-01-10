@@ -12,7 +12,7 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            min-height: 100vh; /* Use min-height instead of height */
+            min-height: 100vh;
         }
 
         .container {
@@ -23,7 +23,7 @@
             text-align: left;
             max-width: 500px;
             width: 100%;
-            margin: 20px auto; /* Add some top and bottom margin */
+            margin: 20px auto;
         }
 
         h1 {
@@ -31,22 +31,27 @@
             text-align: center;
             margin-bottom: 30px;
         }
+
         form {
             display: flex;
             flex-direction: column;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         .form-group label {
             display: block;
             font-weight: 600;
             margin-bottom: 5px;
         }
+
         .form-group input[type="file"] {
             display: block;
             width: 100%;
         }
+
         .form-group input[type="submit"] {
             background-color: #5cb85c;
             color: white;
@@ -57,13 +62,16 @@
             font-size: 16px;
             transition: background-color 0.3s ease;
         }
+
         .form-group input[type="submit"]:hover {
             background-color: #4cae4c;
         }
+
         progress {
             width: 100%;
             margin-bottom: 15px;
         }
+
         .drag-area {
             border: 2px dashed #ccc;
             border-radius: 10px;
@@ -71,28 +79,19 @@
             text-align: center;
             margin-bottom: 15px;
         }
+
         .drag-area.highlight {
             border-color: #5cb85c;
             background-color: #f0fff0;
         }
+
         #fileList {
             margin-top: 10px;
             min-height: 50px;
             border: 1px solid #ccc;
             padding: 5px;
         }
-        .blob-list {
-            margin-top: 20px;
-            text-align: left;
-        }
-        #blobsList {
-            margin-top: 10px;
-            min-height: 50px;
-            border: 1px solid #ccc;
-            padding: 5px;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-        }
+
         .section {
             background-color: #fff;
             padding: 20px;
@@ -100,9 +99,11 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .section + .section {
             margin-top: 20px;
         }
+
         .section-header {
             margin-bottom: 10px;
             font-size: 20px;
@@ -110,17 +111,21 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
         }
+
         .blob-list {
             text-align: left;
             padding-top: 10px;
         }
+
         #blobsList {
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 5px;
             padding: 10px;
-            margin-top: 10px;
+            margin-top: 20px;
+            margin-bottom: 15px;
         }
+
         button {
             background-color: #007bff;
             color: white;
@@ -131,8 +136,17 @@
             border-radius: 5px;
             font-size: 16px;
         }
+
         button:hover {
             background-color: #0056b3;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background-color: #bd2130;
         }
     </style>
 </head>
@@ -145,7 +159,7 @@
             <div class="section-header">List and Delete Old Uploaded Files</div>
             <button type="button" id="listBlobsBtn">List Current Files</button>
             <div class="blob-list" id="blobsList">No files listed</div>
-            <button type="button" id="deleteBlobsBtn" style="background-color: #dc3545;">Delete All Files</button>
+            <button type="button" id="deleteBlobsBtn" class="delete-btn">Delete All Files</button>
         </div>
         
         <!-- Upload New Files Section -->
@@ -160,7 +174,7 @@
             <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
                 <progress id="progressBar" value="0" max="100"></progress>
                 <div class="form-group">
-                    <input type="submit" value="Upload Tables" disabled>
+                    <input type="submit" value="Upload Files" disabled>
                 </div>
             </form>
         </div>
