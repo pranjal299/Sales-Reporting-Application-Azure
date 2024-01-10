@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload to Azure Blob Storage</title>
+    <title>Sales Reporting System</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,9 +12,9 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            min-height: 100vh; /* Use min-height instead of height */
         }
+
         .container {
             background-color: white;
             padding: 40px;
@@ -23,7 +23,9 @@
             text-align: left;
             max-width: 500px;
             width: 100%;
+            margin: 20px auto; /* Add some top and bottom margin */
         }
+
         h1 {
             color: #333;
             text-align: center;
@@ -73,54 +75,107 @@
             border-color: #5cb85c;
             background-color: #f0fff0;
         }
-        #toast-container > .toast-success {
-            background-color: #51A351;
+        #fileList {
+            margin-top: 10px;
+            min-height: 50px;
+            border: 1px solid #ccc;
+            padding: 5px;
         }
-        #toast-container > .toast-error {
-            background-color: #BD362F;
+        .blob-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+        #blobsList {
+            margin-top: 10px;
+            min-height: 50px;
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .section {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .section + .section {
+            margin-top: 20px;
+        }
+        .section-header {
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .blob-list {
+            text-align: left;
+            padding-top: 10px;
+        }
+        #blobsList {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Upload Dimension and Fact Tables</h1>
-        <div id="dragWrapper" class="drag-area">
-            <p>Drag and drop files here</p>
-            <p><small>(Or use the 'Choose File' buttons below for each table)</small></p>
+        <h1>Sales Reporting System</h1>
+        
+        <!-- List and Delete Old Files Section -->
+        <div class="section">
+            <div class="section-header">List and Delete Old Uploaded Files</div>
+            <button type="button" id="listBlobsBtn">List Current Files</button>
+            <div class="blob-list" id="blobsList">No files listed</div>
+            <button type="button" id="deleteBlobsBtn" style="background-color: #dc3545;">Delete All Files</button>
         </div>
-        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="products">Products Dimension Table:</label>
-                <input type="file" name="products" id="products" required>
+        
+        <!-- Upload New Files Section -->
+        <div class="section">
+            <div class="section-header">Upload New Files</div>
+            <p>Please select the dimension and fact table files to upload. You can drag and drop files into the area below or click to browse your files.</p>
+            <div id="dragWrapper" class="drag-area">
+                <input type="file" id="fileInput" multiple style="display: none;">
+                <p>Drag and drop files here or click to browse</p>
             </div>
-            <div class="form-group">
-                <label for="employees">Employees Dimension Table:</label>
-                <input type="file" name="employees" id="employees" required>
-            </div>
-            <div class="form-group">
-                <label for="customers">Customers Dimension Table:</label>
-                <input type="file" name="customers" id="customers" required>
-            </div>
-            <div class="form-group">
-                <label for="payments">Payments Dimension Table:</label>
-                <input type="file" name="payments" id="payments" required>
-            </div>
-            <div class="form-group">
-                <label for="transactions">Transactions Fact Table:</label>
-                <input type="file" name="transactions" id="transactions" required>
-            </div>
-            <progress id="progressBar" value="0" max="100"></progress>
-            <div class="form-group">
-                <input type="submit" value="Upload Tables">
-            </div>
-        </form>
+            <div id="fileList">No files selected</div>
+            <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                <progress id="progressBar" value="0" max="100"></progress>
+                <div class="form-group">
+                    <input type="submit" value="Upload Tables" disabled>
+                </div>
+            </form>
+        </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         var uploadForm = document.getElementById('uploadForm');
+        var fileInput = document.getElementById('fileInput');
         var dragWrapper = document.getElementById('dragWrapper');
-        var progressBar = document.getElementById('progressBar');
+        var fileListDisplay = document.getElementById('fileList');
         var submitButton = uploadForm.querySelector('input[type="submit"]');
+        var progressBar = document.getElementById('progressBar');
+
+        dragWrapper.onclick = function() {
+            fileInput.click();
+        };
 
         dragWrapper.ondragover = dragWrapper.ondragenter = function(event) {
             event.preventDefault();
@@ -134,41 +189,26 @@
         dragWrapper.ondrop = function(event) {
             event.preventDefault();
             dragWrapper.classList.remove('highlight');
-            
-            var files = event.dataTransfer.files;
-            Array.from(files).forEach(file => {
-                // Example of how you could determine the input field based on file extension
-                var input;
-                if (file.name.endsWith('.csv')) {
-                    if (file.name.toLowerCase().includes('product')) {
-                        input = uploadForm.querySelector('input[name="products"]');
-                    } else if (file.name.toLowerCase().includes('employee')) {
-                        input = uploadForm.querySelector('input[name="employees"]');
-                    } else if (file.name.toLowerCase().includes('customer')) {
-                        input = uploadForm.querySelector('input[name="customers"]');
-                    } else if (file.name.toLowerCase().includes('payment')) {
-                        input = uploadForm.querySelector('input[name="payments"]');
-                    } else if (file.name.toLowerCase().includes('transaction')) {
-                        input = uploadForm.querySelector('input[name="transactions"]');
-                    }
-                }
-                
-                if (input) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    input.files = dataTransfer.files;
-                }
-            });
-
-            // Check if all required fields have files to enable the submit button
-            var allFilesAdded = Array.from(uploadForm.querySelectorAll('input[type="file"]')).every(input => input.files.length > 0);
-            submitButton.disabled = !allFilesAdded;
+            fileInput.files = event.dataTransfer.files;
+            updateFileListDisplay();
         };
 
+        fileInput.onchange = updateFileListDisplay;
+
+        function updateFileListDisplay() {
+            var files = Array.from(fileInput.files);
+            var fileNames = files.map(file => file.name).join('<br>');
+            fileListDisplay.innerHTML = fileNames || 'No files selected';
+            submitButton.disabled = files.length === 0;
+        }
 
         uploadForm.onsubmit = function(event) {
             event.preventDefault();
-            var formData = new FormData(this);
+            var formData = new FormData();
+            Array.from(fileInput.files).forEach(file => {
+                formData.append('files[]', file);
+            });
+
             var xhr = new XMLHttpRequest();
             xhr.open('POST', '/upload', true);
 
@@ -181,15 +221,47 @@
 
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    toastr.success('Upload complete!');
+                    alert('Upload complete!');
                 } else {
-                    toastr.error('An error occurred during the upload.');
+                    alert('An error occurred during the upload.');
                 }
-                submitButton.disabled = true; // Disable the submit button after upload
+                submitButton.disabled = true;
             };
 
             xhr.send(formData);
         };
+        
+        document.getElementById('listBlobsBtn').addEventListener('click', function() {
+            fetch('/list-blobs')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('blobsList').innerHTML = data.blobs.join('<br>');
+                })
+                .catch(error => console.error('Error:', error));
+        });
+        
+        document.getElementById('deleteBlobsBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete all files? This cannot be undone.')) {
+                fetch('/delete-blobs', {
+                    method: 'POST',
+                    // Add any headers and body as necessary for your application
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        alert('All files have been deleted.');
+                        // Refresh the list of blobs
+                        document.getElementById('listBlobsBtn').click();
+                    } else {
+                        alert('An error occurred while attempting to delete files.');
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while attempting to delete files.');
+                });
+            }
+        });
     </script>
 </body>
 </html>
