@@ -85,13 +85,6 @@
             background-color: #f0fff0;
         }
 
-        #fileList {
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            padding: 5px;
-        }
-
         .section {
             background-color: #fff;
             padding: 20px;
@@ -117,15 +110,6 @@
             padding-top: 10px;
         }
 
-        #blobsList {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 10px;
-            margin-top: 20px;
-            margin-bottom: 15px;
-        }
-
         button {
             background-color: #007bff;
             color: white;
@@ -148,6 +132,17 @@
         .delete-btn:hover {
             background-color: #bd2130;
         }
+
+        #fileList, #blobsList {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            min-height: 50px;
+        }
+        
     </style>
 </head>
 <body>
@@ -157,6 +152,7 @@
         <!-- List and Delete Old Files Section -->
         <div class="section">
             <div class="section-header">List and Delete Old Uploaded Files</div>
+            <p>Review and manage previously uploaded files. Use the list to check existing files and use the delete button to clear all files if needed.</p>
             <button type="button" id="listBlobsBtn">List Current Files</button>
             <div class="blob-list" id="blobsList">No files listed</div>
             <button type="button" id="deleteBlobsBtn" class="delete-btn">Delete All Files</button>
@@ -249,7 +245,13 @@
             fetch('/list-blobs')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('blobsList').innerHTML = data.blobs.join('<br>');
+                    if (data.blobs.length === 0) {
+                        // Display a message when no files are found
+                        document.getElementById('blobsList').innerHTML = '<p>No files found.</p>';
+                    } else {
+                        // List files if there are any
+                        document.getElementById('blobsList').innerHTML = data.blobs.join('<br>');
+                    }
                 })
                 .catch(error => console.error('Error:', error));
         });
