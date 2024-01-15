@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Reporting System</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="file"] {
+            display: block;
+            width: 100%;
+        }
+
+        .form-group input[type="submit"] {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #4cae4c;
+        }
+
+        progress {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .drag-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .drag-area.highlight {
+            border-color: #5cb85c;
+            background-color: #f0fff0;
+        }
+
+        .section {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .section + .section {
+            margin-top: 20px;
+        }
+
+        .section-header {
+            margin-bottom: 10px;
+            font-size: 20px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .blob-list {
+            text-align: left;
+            padding-top: 10px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background-color: #bd2130;
+        }
+
+        #fileList, #blobsList {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            min-height: 50px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column; /* Aligns items in a column */
+            align-items: center; /* Centers them on the cross axis */
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        nav {
+            width: 100%;
+            background-color: #333;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            max-width: 500px; /* Same as the container width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        nav ul li {
+            padding: 10px 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #5cb85c;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            max-width: 500px;
+            width: 100%;
+            margin-top: 20px; /* Add top margin to separate from nav */
+        }
+  
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sales Reporting System</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Files</a></li>
+            <li><a href="{{ url_for('tables') }}">Tables</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h2>Tables</h2>
+        
+        <!-- List and Delete Old Files Section -->
+        <div class="section">
+            <div class="section-header">List and Delete Tables</div>
+            <p>Review and manage previously uploaded files. Use the list to check existing files and use the delete button to clear all files if needed.</p>
+            <button type="button" id="listBlobsBtn">List Current Files</button>
+            <div class="blob-list" id="blobsList">No files listed</div>
+            <button type="button" id="deleteBlobsBtn" class="delete-btn">Delete All Files</button>
+        </div>
+        
+        <!-- Upload New Files Section -->
+        <div class="section">
+            <div class="section-header">Create Tables</div>
+            <p>Please select the dimension and fact table files to upload. You can drag and drop files into the area below or click to browse your files.</p>
+            <div id="dragWrapper" class="drag-area">
+                <input type="file" id="fileInput" multiple style="display: none;">
+                <p>Drag and drop files here or click to browse</p>
+            </div>
+            <div id="fileList">No files selected</div>
+            <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                <progress id="progressBar" value="0" max="100"></progress>
+                <div class="form-group">
+                    <input type="submit" value="Upload Files" disabled>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        var uploadForm = document.getElementById('uploadForm');
+        var fileInput = document.getElementById('fileInput');
+        var dragWrapper = document.getElementById('dragWrapper');
+        var fileListDisplay = document.getElementById('fileList');
+        var submitButton = uploadForm.querySelector('input[type="submit"]');
+        var progressBar = document.getElementById('progressBar');
+
+        dragWrapper.onclick = function() {
+            fileInput.click();
+        };
+
+        dragWrapper.ondragover = dragWrapper.ondragenter = function(event) {
+            event.preventDefault();
+            dragWrapper.classList.add('highlight');
+        };
+
+        dragWrapper.ondragleave = function() {
+            dragWrapper.classList.remove('highlight');
+        };
+
+        dragWrapper.ondrop = function(event) {
+            event.preventDefault();
+            dragWrapper.classList.remove('highlight');
+            fileInput.files = event.dataTransfer.files;
+            updateFileListDisplay();
+        };
+
+        fileInput.onchange = updateFileListDisplay;
+
+        function updateFileListDisplay() {
+            var files = Array.from(fileInput.files);
+            var fileNames = files.map(file => file.name).join('<br>');
+            fileListDisplay.innerHTML = fileNames || 'No files selected';
+            submitButton.disabled = files.length === 0;
+        }
+
+        uploadForm.onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData();
+            Array.from(fileInput.files).forEach(file => {
+                formData.append('files[]', file);
+            });
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload', true);
+
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    var percentComplete = (e.loaded / e.total) * 100;
+                    progressBar.value = percentComplete;
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert('Upload complete!');
+                } else {
+                    alert('An error occurred during the upload.');
+                }
+                submitButton.disabled = true;
+            };
+
+            xhr.send(formData);
+        };
+        
+        document.getElementById('listBlobsBtn').addEventListener('click', function() {
+            fetch('/list-blobs')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.blobs.length === 0) {
+                        // Display a message when no files are found
+                        document.getElementById('blobsList').innerHTML = '<p>No files found.</p>';
+                    } else {
+                        // List files if there are any
+                        document.getElementById('blobsList').innerHTML = data.blobs.join('<br>');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+        
+        document.getElementById('deleteBlobsBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete all files? This cannot be undone.')) {
+                fetch('/delete-blobs', {
+                    method: 'POST',
+                    // Add any headers and body as necessary for your application
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        alert('All files have been deleted.');
+                        // Refresh the list of blobs
+                        document.getElementById('listBlobsBtn').click();
+                    } else {
+                        alert('An error occurred while attempting to delete files.');
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while attempting to delete files.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
