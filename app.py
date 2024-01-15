@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, jsonify
 from azure.storage.blob import BlobServiceClient
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='static')
 
 # Azure Storage Account settings
 CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesrepstorageacc;AccountKey=7VFqRFCzw+o5Dg4iTmFcClNkhDndSTNGKE1YcdFlVhxbrWP/q0JWOS4VDZvgVezQLcw8WK4KEj7I+ASts2Kh/A==;EndpointSuffix=core.windows.net'
@@ -46,6 +46,10 @@ def delete_blobs():
     for blob in blob_list:
         container_client.delete_blob(blob)
     return jsonify({'status': 'success', 'message': 'All blobs have been deleted.'})
+
+@app.route('/tables')
+def tables():
+    return render_template('tables.html')
 
 
 if __name__ == '__main__':
