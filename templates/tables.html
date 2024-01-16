@@ -188,6 +188,22 @@
             width: 100%;
             margin-top: 20px; /* Add top margin to separate from nav */
         }
+
+        .create-tables-btn {
+            background-color: #5cb85c; /* Green background */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .create-tables-btn:hover {
+            background-color: #4cae4c; /* Slightly darker green for hover state */
+        }
   
     </style>
 </head>
@@ -217,7 +233,7 @@
         <div class="section">
             <div class="section-header">Create Tables</div>
             <p>Please select the dimension and fact table tables to upload. You can drag and drop tables into the area below or click to browse your tables.</p>
-            <button type="button" id="createTablesBtn">Create Tables</button>
+            <button type="button" id="createTablesBtn" class="create-tables-btn">Create Tables</button>
         </div>
     </div>
     <script>
