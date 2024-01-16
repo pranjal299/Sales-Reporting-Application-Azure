@@ -9,7 +9,13 @@ CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesrepstoragea
 
 # Determine the environment and set the container name
 ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
-CONTAINER_NAME = 'salesrepcontainerlocal' if ENVIRONMENT == 'development' else 'salesrepcontainer'
+
+if ENVIRONMENT == 'development':
+    CONTAINER_NAME = 'salesrepcontainerlocal'
+    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:sales-reporting-system.database.windows.net,1433;Database=salesrepdbdev;Uid=berlin;Pwd=Youtube123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
+else:
+    CONTAINER_NAME = 'salesrepcontainer'
+    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:sales-reporting-system.database.windows.net,1433;Database=salesrepdb;Uid=berlin;Pwd=Youtube123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
 
 blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
 
@@ -51,6 +57,40 @@ def delete_blobs():
 def tables():
     return render_template('tables.html')
 
+@app.route('/list-tables')
+def list_tables():
+    import pyodbc
+    conn = pyodbc.connect(DB_CONNECTION_STRING)
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sys.tables")
+    tables = [table[0] for table in cursor.fetchall()]
+    return jsonify(tables=tables)
+
+@app.route('/delete-tables', methods=['POST'])
+def delete_tables():
+    import pyodbc
+    conn = pyodbc.connect(DB_CONNECTION_STRING)
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sys.tables")
+    tables = [table[0] for table in cursor.fetchall()]
+    for table in tables:
+        cursor.execute(f"DROP TABLE {table}")
+    conn.commit()
+    return jsonify({'status': 'success', 'message': 'All tables have been deleted.'})
+
+@app.route('/create-tables', methods=['POST'])
+# Code for creating tables based on individual SQL scripts present in the static folder
+def create_tables():
+    import pyodbc
+    conn = pyodbc.connect(DB_CONNECTION_STRING)
+    cursor = conn.cursor()
+    for file in os.listdir('scripts/DDL'):
+        if file.endswith('.sql'):
+            with open(os.path.join('scripts/DDL', file), 'r') as f:
+                sql = f.read()
+                cursor.execute(sql)
+    conn.commit()
+    return jsonify({'status': 'success', 'message': 'All tables have been created.'})
 
 if __name__ == '__main__':
     app.run(debug=True)
