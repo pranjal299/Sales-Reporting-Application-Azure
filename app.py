@@ -100,18 +100,25 @@ def delete_tables():
     return jsonify({'status': 'success', 'message': 'All tables and foreign key constraints have been deleted.'})
 
 @app.route('/create-tables', methods=['POST'])
-# Code for creating tables based on individual SQL scripts present in the static folder
 def create_tables():
     import pyodbc
+    import os
     conn = pyodbc.connect(DB_CONNECTION_STRING)
     cursor = conn.cursor()
-    for file in os.listdir('scripts/DDL'):
-        if file.endswith('.sql'):
-            with open(os.path.join('scripts/DDL', file), 'r') as f:
-                sql = f.read()
-                cursor.execute(sql)
+    # Retrieve all .sql files from the specified directory
+    sql_files = [file for file in os.listdir('scripts/DDL') if file.endswith('.sql')]
+    # Sort the files: 'dim' files first, then others, then 'fact' files last
+    dim_files = [file for file in sql_files if 'dim' in file]
+    fact_files = [file for file in sql_files if 'fact' in file]
+    sorted_files = dim_files + fact_files
+    # Execute each SQL file in the sorted order
+    for file in sorted_files:
+        with open(os.path.join('scripts/DDL', file), 'r') as f:
+            sql = f.read()
+            cursor.execute(sql)
     conn.commit()
     return jsonify({'status': 'success', 'message': 'All tables have been created.'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
