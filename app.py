@@ -69,14 +69,35 @@ def list_tables():
 @app.route('/delete-tables', methods=['POST'])
 def delete_tables():
     import pyodbc
+    # Establish the database connection
     conn = pyodbc.connect(DB_CONNECTION_STRING)
     cursor = conn.cursor()
+    # Step 1: Identify and drop foreign key constraints
+    cursor.execute("""
+        SELECT 
+            fk.name AS FK_name, 
+            tp.name AS parent_table,
+            ref.name AS referenced_table 
+        FROM 
+            sys.foreign_keys AS fk
+        INNER JOIN 
+            sys.tables AS tp ON fk.parent_object_id = tp.object_id
+        INNER JOIN 
+            sys.tables AS ref ON fk.referenced_object_id = ref.object_id
+    """)
+    fks = cursor.fetchall()
+    for fk in fks:
+        alter_query = f"ALTER TABLE {fk.parent_table} DROP CONSTRAINT {fk.FK_name}"
+        cursor.execute(alter_query)
+    # Step 2: Drop tables
     cursor.execute("SELECT name FROM sys.tables")
     tables = [table[0] for table in cursor.fetchall()]
     for table in tables:
-        cursor.execute(f"DROP TABLE {table}")
+        drop_query = f"DROP TABLE {table}"
+        cursor.execute(drop_query)
+    # Commit the transaction and close the connection
     conn.commit()
-    return jsonify({'status': 'success', 'message': 'All tables have been deleted.'})
+    return jsonify({'status': 'success', 'message': 'All tables and foreign key constraints have been deleted.'})
 
 @app.route('/create-tables', methods=['POST'])
 # Code for creating tables based on individual SQL scripts present in the static folder
