@@ -12,7 +12,7 @@ ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
 
 if ENVIRONMENT == 'development':
     CONTAINER_NAME = 'salesrepcontainerlocal'
-    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:sales-reporting-system.database.windows.net,1433;Database=salesrepdbdev;Uid=berlin;Pwd=Youtube123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
+    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:sales-reporting-system.database.windows.net,1433;Database=salesrepdb;Uid=berlin;Pwd=Youtube123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
 else:
     CONTAINER_NAME = 'salesrepcontainer'
     DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:sales-reporting-system.database.windows.net,1433;Database=salesrepdb;Uid=berlin;Pwd=Youtube123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
