@@ -1,0 +1,56 @@
+{
+	"name": "EmployeesCsv_Prod",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Prod"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "employees.csv",
+				"container": "salesrepcontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "employee_id",
+				"type": "String"
+			},
+			{
+				"name": "employee_name",
+				"type": "String"
+			},
+			{
+				"name": "employee_ssn",
+				"type": "String"
+			},
+			{
+				"name": "employee_phone",
+				"type": "String"
+			},
+			{
+				"name": "employee_state",
+				"type": "String"
+			},
+			{
+				"name": "employee_city",
+				"type": "String"
+			},
+			{
+				"name": "employee_postal",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

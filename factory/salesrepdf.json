@@ -1,0 +1,9 @@
+{
+	"name": "salesrepdf",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "38279c06-2b00-4547-b820-38fc9e0c16ff",
+		"tenantId": "06f752f0-4e41-4efb-ba12-9f1c8bcd3025"
+	}
+}
