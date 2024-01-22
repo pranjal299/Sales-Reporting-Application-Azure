@@ -1,0 +1,30 @@
+{
+	"name": "PaymentsTable_Prod",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase_Prod",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Prod"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "payment_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "payment_type",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Payments"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
