@@ -3,3 +3,4 @@ azure-storage-blob
 pyodbc
 azure-identity
 azure-mgmt-resource
+azure-mgmt-datafactory
