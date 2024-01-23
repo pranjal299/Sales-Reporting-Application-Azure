@@ -33,11 +33,11 @@ adf_client = DataFactoryManagementClient(credentials, subscription_id)
 
 if ENVIRONMENT == 'development':
     CONTAINER_NAME = 'salesrepblobdev'
-    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:sales-reporting-system.database.windows.net,1433;Database=salesrepdbdev;Uid=berlin;Pwd=Youtube123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
+    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:salesrepdbserver.database.windows.net,1433;Database=salesrepdbdev;Uid=berlin;Pwd=Youtube@123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
     pipeline_name = 'Ingestion - Dev'
 else:
     CONTAINER_NAME = 'salesrepblob'
-    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:sales-reporting-system.database.windows.net,1433;Database=salesrepdb;Uid=berlin;Pwd=Youtube123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
+    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:salesrepdbserver.database.windows.net,1433;Database=salesrepdb;Uid=berlin;Pwd=Youtube@123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
     pipeline_name = 'Ingestion - Prod'
 
 blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
