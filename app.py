@@ -11,7 +11,7 @@ import os
 app = Flask(__name__, static_url_path='', static_folder='static')
 
 # Azure Storage Account settings
-CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesrepstorageacc;AccountKey=7VFqRFCzw+o5Dg4iTmFcClNkhDndSTNGKE1YcdFlVhxbrWP/q0JWOS4VDZvgVezQLcw8WK4KEj7I+ASts2Kh/A==;EndpointSuffix=core.windows.net'
+CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesrepstacc;AccountKey=w1YCSmzZ5nQrkkGXWSNljI2tOH1VIvKHp8HPO5MgJGNInMvf24swHZ+WELNuMq6XyZmL4T97hAL8+AStGT8bXA==;EndpointSuffix=core.windows.net'
 
 # Determine the environment and set the container name
 ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
@@ -20,7 +20,7 @@ ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
 subscription_id = '53587102-7bd3-492c-a651-734213d61ed9'
 
 # This program creates this resource group. If it's an existing resource group, comment out the code that creates the resource group
-rg_name = 'sales-reporting'
+rg_name = 'salesreporting'
 
 # The data factory name. It must be globally unique.
 df_name = 'salesrepdf'
@@ -32,11 +32,11 @@ resource_client = ResourceManagementClient(credentials, subscription_id)
 adf_client = DataFactoryManagementClient(credentials, subscription_id)
 
 if ENVIRONMENT == 'development':
-    CONTAINER_NAME = 'salesrepcontainerlocal'
+    CONTAINER_NAME = 'salesrepblobdev'
     DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:sales-reporting-system.database.windows.net,1433;Database=salesrepdbdev;Uid=berlin;Pwd=Youtube123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
     pipeline_name = 'Ingestion - Dev'
 else:
-    CONTAINER_NAME = 'salesrepcontainer'
+    CONTAINER_NAME = 'salesrepblob'
     DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:sales-reporting-system.database.windows.net,1433;Database=salesrepdb;Uid=berlin;Pwd=Youtube123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
     pipeline_name = 'Ingestion - Prod'
 
