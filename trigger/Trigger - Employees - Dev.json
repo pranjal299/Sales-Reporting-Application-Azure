@@ -1,0 +1,25 @@
+{
+	"name": "Trigger - Employees - Dev",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Ingestion - Employees - Dev",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/salesrepcontainerlocal/blobs/",
+			"blobPathEndsWith": "employees.csv",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/53587102-7bd3-492c-a651-734213d61ed9/resourceGroups/sales-reporting/providers/Microsoft.Storage/storageAccounts/salesrepstorageacc",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
