@@ -4,3 +4,4 @@ pyodbc
 azure-identity
 azure-mgmt-resource
 azure-mgmt-datafactory
+pytz
