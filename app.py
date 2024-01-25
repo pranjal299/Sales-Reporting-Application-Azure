@@ -11,10 +11,6 @@ import pytz
 
 app = Flask(__name__, static_url_path='', static_folder='static')
 
-# Timezone conversion
-utc_zone = pytz.utc
-local_zone = pytz.timezone('America/New_York')
-
 # Azure Storage Account settings
 CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesrepstacc;AccountKey=w1YCSmzZ5nQrkkGXWSNljI2tOH1VIvKHp8HPO5MgJGNInMvf24swHZ+WELNuMq6XyZmL4T97hAL8+AStGT8bXA==;EndpointSuffix=core.windows.net'
 
@@ -181,13 +177,14 @@ def pipeline_status():
         if run.pipeline_name in pipelines_of_interest:
             runs_by_pipeline[run.pipeline_name].append(run)
 
+    local_zone = pytz.timezone('America/New_York')  # Replace with your local timezone
+
     # Sort runs by last updated time and pick the latest
     latest_runs = {}
     for pipeline, runs in runs_by_pipeline.items():
         if runs:
             latest_run = sorted(runs, key=lambda x: x.last_updated, reverse=True)[0]
-            utc_time = utc_zone.localize(latest_run.last_updated)
-            local_time = utc_time.astimezone(local_zone)
+            local_time = latest_run.last_updated.astimezone(local_zone)
             latest_runs[pipeline] = {
                 'Status': latest_run.status,
                 'Last Updated': local_time.strftime("%Y-%m-%d %H:%M:%S")
