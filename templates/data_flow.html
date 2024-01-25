@@ -222,13 +222,6 @@
     <div class="container">
         <h2>Data Flow</h2>
         
-        <!-- Trigger Ingestion -->
-        <div class="section">
-            <div class="section-header">Initiate Ingestion</div>
-            <p>Use the button to start ingestion of uploaded files into database.</p>
-            <button type="button" id="triggerIngestionBtn" class="create-tables-btn">Trigger Ingestion</button>
-        </div>
-
         <div class="section">
             <div class="section-header">Pipeline Status</div>
             <div id="pipelineStatus">
@@ -237,25 +230,6 @@
         </div>
     </div>
     <script>
-
-        document.getElementById('triggerIngestionBtn').addEventListener('click', function() {
-            fetch('/trigger-ingestion', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    alert('Ingestion has been triggered.');
-                } else {
-                    alert('An error occurred while attempting to trigger ingestion.');
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while attempting to trigger ingestion.');
-            });
-        });
-
         function fetchPipelineStatus() {
         fetch('/pipeline-status')
             .then(response => response.json())
