@@ -17,7 +17,7 @@ CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesrepstacc;Ac
 ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
 
 # Azure subscription ID
-subscription_id = '53587102-7bd3-492c-a651-734213d61ed9'
+subscription_id = '8dbd0733-f726-4a78-8157-0d43526bab37'
 
 # This program creates this resource group. If it's an existing resource group, comment out the code that creates the resource group
 rg_name = 'salesreporting'
@@ -26,7 +26,7 @@ rg_name = 'salesreporting'
 df_name = 'salesrepdf'
 
 # Specify your Active Directory client ID, client secret, and tenant ID
-credentials = ClientSecretCredential(client_id='9b23a631-3019-4890-bd89-3fda2f168f4e', client_secret='7ab8Q~cmC66jJHZmtLIg14I.2McNS-eNeFj29dlt', tenant_id='06f752f0-4e41-4efb-ba12-9f1c8bcd3025') 
+credentials = ClientSecretCredential(client_id='2880c44e-18ce-4ed5-891a-c722a84b92c4', client_secret='KLE8Q~tdBNsSVJKXw0oJ2Po.eGd~8VD8Nerv2apd', tenant_id='c2f20835-6843-45b2-ad68-c9280184ebcb') 
 
 resource_client = ResourceManagementClient(credentials, subscription_id)
 adf_client = DataFactoryManagementClient(credentials, subscription_id)
@@ -34,11 +34,27 @@ adf_client = DataFactoryManagementClient(credentials, subscription_id)
 if ENVIRONMENT == 'development':
     CONTAINER_NAME = 'salesrepblobdev'
     DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:salesrepdbserver.database.windows.net,1433;Database=salesrepdbdev;Uid=berlin;Pwd=Youtube@123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
-    pipeline_name = 'Ingestion - Dev'
+    pipeline_postfix = 'Dev'
+    pipelines_of_interest = [
+    'Ingest Products Dev', 
+    'Ingest Payments Dev', 
+    'Ingest Customers Dev', 
+    'Ingest Employees Dev', 
+    'Ingest Transactions Dev'
+]
+    
 else:
     CONTAINER_NAME = 'salesrepblob'
     DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:salesrepdbserver.database.windows.net,1433;Database=salesrepdb;Uid=berlin;Pwd=Youtube@123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
-    pipeline_name = 'Ingestion - Prod'
+    pipeline_postfix = 'Dev'
+    pipelines_of_interest = [
+    'Ingest Products Prod', 
+    'Ingest Payments Prod', 
+    'Ingest Customers Prod', 
+    'Ingest Employees Prod', 
+    'Ingest Transactions Prod'
+]
+
 
 blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
 
@@ -151,6 +167,33 @@ def data_flow():
 def trigger_ingestion():
     run_response = adf_client.pipelines.create_run(rg_name, df_name, pipeline_name)
     return jsonify({'status': 'success', 'message': 'The ingestion pipeline has been triggered.'})
+
+@app.route('/pipeline-status')
+def pipeline_status():
+    pipeline_runs = adf_client.pipeline_runs.query_by_factory(
+        rg_name,
+        df_name,
+        {"lastUpdatedAfter": datetime.now() - timedelta(days=1), 
+         "lastUpdatedBefore": datetime.now() + timedelta(days=1)}
+    )
+
+    # Collect runs for each pipeline
+    runs_by_pipeline = {pipeline: [] for pipeline in pipelines_of_interest}
+    for run in pipeline_runs.value:
+        if run.pipeline_name in pipelines_of_interest:
+            runs_by_pipeline[run.pipeline_name].append(run)
+
+    # Sort runs by last updated time and pick the latest
+    latest_runs = {}
+    for pipeline, runs in runs_by_pipeline.items():
+        if runs:
+            latest_run = sorted(runs, key=lambda x: x.last_updated, reverse=True)[0]
+            latest_runs[pipeline] = {
+                'Status': latest_run.status,
+                'Last Updated': latest_run.last_updated.strftime("%Y-%m-%d %H:%M:%S")
+            }
+
+    return jsonify(latest_runs)
 
 if __name__ == '__main__':
     app.run(debug=True)

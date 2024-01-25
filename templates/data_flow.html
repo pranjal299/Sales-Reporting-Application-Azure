@@ -228,6 +228,13 @@
             <p>Use the button to start ingestion of uploaded files into database.</p>
             <button type="button" id="triggerIngestionBtn" class="create-tables-btn">Trigger Ingestion</button>
         </div>
+
+        <div class="section">
+            <div class="section-header">Pipeline Status</div>
+            <div id="pipelineStatus">
+                <p>Loading...</p>
+            </div>
+        </div>
     </div>
     <script>
 
@@ -248,6 +255,27 @@
                 alert('An error occurred while attempting to trigger ingestion.');
             });
         });
+
+        function fetchPipelineStatus() {
+        fetch('/pipeline-status')
+            .then(response => response.json())
+            .then(statuses => {
+                const statusDiv = document.getElementById('pipelineStatus');
+                statusDiv.innerHTML = '';
+                for (const [pipeline, data] of Object.entries(statuses)) {
+                    const p = document.createElement('p');
+                    p.innerHTML = `<strong>${pipeline}:</strong> Status - ${data.Status}, Last Updated - ${data['Last Updated']}`;
+                    statusDiv.appendChild(p);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    // Fetch status immediately and then every 30 seconds
+    fetchPipelineStatus();
+    setInterval(fetchPipelineStatus, 10000);
 
     </script>
 </body>
