@@ -177,8 +177,9 @@ def pipeline_status():
         if run.pipeline_name in pipelines_of_interest:
             runs_by_pipeline[run.pipeline_name].append(run)
 
-    local_zone = pytz.timezone('America/New_York')  # Replace with your local timezone
-
+    user_timezone = request.args.get('timezone', 'UTC')
+    local_zone = pytz.timezone(user_timezone)
+    
     # Sort runs by last updated time and pick the latest
     latest_runs = {}
     for pipeline, runs in runs_by_pipeline.items():

@@ -221,7 +221,6 @@
     </nav>
     <div class="container">
         <h2>Data Flow</h2>
-        
         <div class="section">
             <div class="section-header">Pipeline Status</div>
             <div id="pipelineStatus">
@@ -230,8 +229,10 @@
         </div>
     </div>
     <script>
-        function fetchPipelineStatus() {
-        fetch('/pipeline-status')
+    function fetchPipelineStatus() {
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        fetch(`/pipeline-status?timezone=${userTimeZone}`)
             .then(response => response.json())
             .then(statuses => {
                 const statusDiv = document.getElementById('pipelineStatus');
