@@ -194,7 +194,7 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            margin-top: 10px;
+            margin-top: 0px;
             cursor: pointer;
             border-radius: 5px;
             font-size: 16px;
@@ -232,6 +232,38 @@
         .overflow-container {
             overflow-x: auto;
         }
+
+        .form-group {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 10px; /* adds space between elements */
+}
+
+.form-group select, .form-group button {
+    height: 40px; /* Adjust height as needed */
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-group button {
+    padding: 0 1rem; /* Adjust horizontal padding as needed */
+}
+
+/* Additional styling for the button to match select */
+.create-tables-btn {
+    border: none;
+    background-color: #5cb85c;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-tables-btn:hover {
+    background-color: #4cae4c;
+}
     </style>
 </head>
 <body>
@@ -259,18 +291,19 @@
         <h2>Table Data</h2>
         <div class="section">
             <div class="section-header">View Table Data</div>
-            <select id="tableSelect" class="form-control">
-                <option value="">Select a Table</option>
-                <option value="Products">Products</option>
-                <option value="Customers">Customers</option>
-                <option value="Employees">Employees</option>
-                <option value="Payments">Payments</option>
-                <option value="Transactions">Transactions</option>
-            </select>
-            <br>
-            <button type="button" id="loadTableDataBtn" class="create-tables-btn">Load Data</button>
+            <div class="form-group">
+                <select id="tableSelect" class="form-control">
+                    <option value="">Select a Table</option>
+                    <option value="Products">Products</option>
+                    <option value="Customers">Customers</option>
+                    <option value="Employees">Employees</option>
+                    <option value="Payments">Payments</option>
+                    <option value="Transactions">Transactions</option>
+                </select>
+                <button type="button" id="loadTableDataBtn" class="create-tables-btn">Load Data</button>
+            </div>
             <div id="specificTableData">
-                <!-- Specific table data will be displayed here -->
+                <!-- Table data will be displayed here -->
             </div>
         </div>
     </div>
