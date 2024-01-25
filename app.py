@@ -179,7 +179,7 @@ def pipeline_status():
 
     user_timezone = request.args.get('timezone', 'UTC')
     local_zone = pytz.timezone(user_timezone)
-    
+
     # Sort runs by last updated time and pick the latest
     latest_runs = {}
     for pipeline, runs in runs_by_pipeline.items():
@@ -192,6 +192,25 @@ def pipeline_status():
             }
 
     return jsonify(latest_runs)
+
+@app.route('/load-table-data/<table_name>')
+def load_specific_table_data(table_name):
+    import pyodbc
+    conn = pyodbc.connect(DB_CONNECTION_STRING)
+    cursor = conn.cursor()
+
+    # Validate table name to prevent SQL injection
+    valid_tables = ['Products', 'Customers', 'Employees', 'Payments', 'Transactions']
+    if table_name not in valid_tables:
+        return jsonify({"error": "Invalid table name"}), 400
+
+    # Fetch first three rows from the specific table
+    cursor.execute(f"SELECT TOP 3 * FROM dbo.{table_name}")
+    columns = [column[0] for column in cursor.description]
+    rows = cursor.fetchall()
+    table_data = [dict(zip(columns, row)) for row in rows]
+
+    return jsonify(table_data)
 
 if __name__ == '__main__':
     app.run(debug=True)

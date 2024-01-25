@@ -204,7 +204,34 @@
         .create-tables-btn:hover {
             background-color: #4cae4c; /* Slightly darker green for hover state */
         }
-  
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table, th, td {
+            font-size: 0.9em;
+        }
+
+        .overflow-container {
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
@@ -228,6 +255,25 @@
             </div>
         </div>
     </div>
+    <div class="container">
+        <h2>Table Data</h2>
+        <div class="section">
+            <div class="section-header">View Specific Table Data</div>
+            <button type="button" class="create-tables-btn" onclick="loadTableData('Products')">Load Products Data</button>
+            <br>
+            <button type="button" class="create-tables-btn" onclick="loadTableData('Customers')">Load Customers Data</button>
+            <br>
+            <button type="button" class="create-tables-btn" onclick="loadTableData('Employees')">Load Employees Data</button>
+            <br>
+            <button type="button" class="create-tables-btn" onclick="loadTableData('Payments')">Load Payments Data</button>
+            <br>
+            <button type="button" class="create-tables-btn" onclick="loadTableData('Transactions')">Load Transactions Data</button>
+            <br>
+            <div id="specificTableData">
+                <!-- Specific table data will be displayed here -->
+            </div>
+        </div>
+    </div>
     <script>
     function fetchPipelineStatus() {
         const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -247,6 +293,53 @@
                 console.error('Error:', error);
             });
     }
+
+    function loadTableData(tableName) {
+    fetch(`/load-table-data/${tableName}`)
+        .then(response => response.json())
+        .then(rows => {
+            const tableDataDiv = document.getElementById('specificTableData');
+            tableDataDiv.innerHTML = `<h3>${tableName} Data</h3>`;
+
+            // Container to handle overflow
+            const overflowContainer = document.createElement('div');
+            overflowContainer.className = 'overflow-container';
+
+            const table = document.createElement('table');
+
+            // Create thead element
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            if (rows.length > 0) {
+                Object.keys(rows[0]).forEach(key => {
+                    const th = document.createElement('th');
+                    th.textContent = key;
+                    headerRow.appendChild(th);
+                });
+            }
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Create tbody element
+            const tbody = document.createElement('tbody');
+            rows.forEach(row => {
+                const tr = document.createElement('tr');
+                Object.values(row).forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            overflowContainer.appendChild(table);
+            tableDataDiv.appendChild(overflowContainer);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 
     // Fetch status immediately and then every 30 seconds
     fetchPipelineStatus();
