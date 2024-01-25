@@ -258,17 +258,17 @@
     <div class="container">
         <h2>Table Data</h2>
         <div class="section">
-            <div class="section-header">View Specific Table Data</div>
-            <button type="button" class="create-tables-btn" onclick="loadTableData('Products')">View Products Data</button>
+            <div class="section-header">View Table Data</div>
+            <select id="tableSelect" class="form-control">
+                <option value="">Select a Table</option>
+                <option value="Products">Products</option>
+                <option value="Customers">Customers</option>
+                <option value="Employees">Employees</option>
+                <option value="Payments">Payments</option>
+                <option value="Transactions">Transactions</option>
+            </select>
             <br>
-            <button type="button" class="create-tables-btn" onclick="loadTableData('Customers')">View Customers Data</button>
-            <br>
-            <button type="button" class="create-tables-btn" onclick="loadTableData('Employees')">View Employees Data</button>
-            <br>
-            <button type="button" class="create-tables-btn" onclick="loadTableData('Payments')">View Payments Data</button>
-            <br>
-            <button type="button" class="create-tables-btn" onclick="loadTableData('Transactions')">View Transactions Data</button>
-            <br>
+            <button type="button" id="loadTableDataBtn" class="create-tables-btn">Load Data</button>
             <div id="specificTableData">
                 <!-- Specific table data will be displayed here -->
             </div>
@@ -293,6 +293,15 @@
                 console.error('Error:', error);
             });
     }
+
+    document.getElementById('loadTableDataBtn').addEventListener('click', function() {
+        const selectedTable = document.getElementById('tableSelect').value;
+        if (selectedTable) {
+            loadTableData(selectedTable);
+        } else {
+            alert('Please select a table first.');
+        }
+    });
 
     function loadTableData(tableName) {
     fetch(`/load-table-data/${tableName}`)

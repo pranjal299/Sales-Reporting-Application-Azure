@@ -205,7 +205,7 @@ def load_specific_table_data(table_name):
         return jsonify({"error": "Invalid table name"}), 400
 
     # Fetch first three rows from the specific table
-    cursor.execute(f"SELECT TOP 3 * FROM dbo.{table_name}")
+    cursor.execute(f"SELECT TOP 5 * FROM dbo.{table_name}")
     columns = [column[0] for column in cursor.description]
     rows = cursor.fetchall()
     table_data = [dict(zip(columns, row)) for row in rows]
