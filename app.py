@@ -162,12 +162,6 @@ def create_tables():
 def data_flow():
     return render_template('data_flow.html')
 
-# Write decorator and function for /trigger-ingestion which triggers the Azure Data Factore pipeline using adf_client.pipelines.create_run(rg_name, df_name, pipeline_name)
-@app.route('/trigger-ingestion', methods=['POST'])
-def trigger_ingestion():
-    run_response = adf_client.pipelines.create_run(rg_name, df_name, pipeline_name)
-    return jsonify({'status': 'success', 'message': 'The ingestion pipeline has been triggered.'})
-
 @app.route('/pipeline-status')
 def pipeline_status():
     pipeline_runs = adf_client.pipeline_runs.query_by_factory(
