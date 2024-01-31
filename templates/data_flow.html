@@ -264,6 +264,88 @@
 .create-tables-btn:hover {
     background-color: #4cae4c;
 }
+
+/* Existing CSS styles */
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+    .container {
+        width: 90%; /* Set width to a percentage of the viewport width */
+        max-width: none; /* Remove the max-width */
+        padding: 20px; /* Adjust padding for smaller screens */
+        margin-top: 10px; /* Adjust margin at the top */
+    }
+
+    .form-group {
+        flex-direction: column; /* Stack the elements vertically */
+    }
+
+    .form-group select, 
+    .form-group button {
+        width: 100%; /* Full width */
+        margin: 10px 0; /* Add some margin at the top and bottom */
+    }
+
+    nav ul {
+        flex-direction: column; /* Stack the nav items vertically */
+    }
+
+    nav ul li,
+    nav ul li a {
+        width: 100%; /* Full width */
+        text-align: center; /* Center align the text */
+    }
+
+    .section {
+        margin-top: 20px; /* Add some margin at the top of each section */
+    }
+
+    /* Adjust font sizes for smaller screens */
+    h1, h2, .section-header, button, select, p {
+        font-size: 16px; /* Adjust the font size */
+    }
+
+    /* Adjust the section header margins */
+    .section-header {
+        margin-bottom: 5px;
+    }
+
+    /* Make the status updates stack vertically */
+    #pipelineStatus p {
+        margin-bottom: 10px; /* Add some space between each status */
+    }
+}
+
+/* Fix for overflow issues on small screens */
+.overflow-container {
+    overflow-x: scroll; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS devices */
+}
+
+/* Ensure that tables do not overflow the container on small screens */
+table {
+    width: 100%; /* Full width */
+    max-width: 100%; /* Ensure it doesn't exceed the width of its container */
+    border-collapse: collapse;
+}
+
+/* Responsive table styles */
+table, th, td {
+    font-size: 14px; /* Smaller font size for tables */
+}
+
+th, td {
+    padding: 8px; /* Adjust padding for table cells */
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
     </style>
 </head>
 <body>
