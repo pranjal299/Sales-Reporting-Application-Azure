@@ -1,0 +1,48 @@
+{
+	"name": "EmployeesTableDev",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "employee_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "employee_name",
+				"type": "varchar"
+			},
+			{
+				"name": "employee_ssn",
+				"type": "varchar"
+			},
+			{
+				"name": "employee_phone",
+				"type": "varchar"
+			},
+			{
+				"name": "employee_state",
+				"type": "varchar"
+			},
+			{
+				"name": "employee_city",
+				"type": "varchar"
+			},
+			{
+				"name": "employee_postal",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Employees"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

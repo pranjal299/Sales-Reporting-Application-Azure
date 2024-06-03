@@ -1,0 +1,25 @@
+{
+	"name": "Trigger Products Dev",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Ingest Products Dev",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/salesrepblobdev/blobs/products",
+			"blobPathEndsWith": ".csv",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/8dbd0733-f726-4a78-8157-0d43526bab37/resourceGroups/salesreporting/providers/Microsoft.Storage/storageAccounts/salesrepstacc",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
