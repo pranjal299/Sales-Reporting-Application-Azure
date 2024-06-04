@@ -28,7 +28,7 @@ BEGIN
             Products p ON t.product_id = p.product_id
         GROUP BY
             p.product_id,
-            p.product_category,
+            P.product_category,
             FORMAT(t.[timestamp], 'yyyy-MM')
     )
     INSERT INTO MonthlyProductMetrics (month_year, product_category, product_id, products_sold, total_money_made)
