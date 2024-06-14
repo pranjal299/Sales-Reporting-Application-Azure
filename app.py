@@ -12,16 +12,17 @@ import pytz
 app = Flask(__name__, static_url_path='', static_folder='static')
 
 # Azure Storage Account settings
-CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesrepstacc;AccountKey=w1YCSmzZ5nQrkkGXWSNljI2tOH1VIvKHp8HPO5MgJGNInMvf24swHZ+WELNuMq6XyZmL4T97hAL8+AStGT8bXA==;EndpointSuffix=core.windows.net'
+CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesreportingappstacc  ;AccountKey=w1YCSmzZ5nQrkkGXWSNljI2tOH1VIvKHp8HPO5MgJGNInMvf24swHZ+WELNuMq6XyZmL4T97hAL8+AStGT8bXA==;EndpointSuffix=core.windows.net'
 
 # Determine the environment and set the container name
-ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
+# ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
+ENVIRONMENT = 'prod'
 
 # Azure subscription ID
-subscription_id = '8dbd0733-f726-4a78-8157-0d43526bab37'
+subscription_id = '8c10f661-e991-47d6-85c8-50e6fe1af3e6'
 
-# This program creates this resource group. If it's an existing resource group, comment out the code that creates the resource group
-rg_name = 'salesreporting'
+# rg_name
+rg_name = 'salesreportingapplication_group'
 
 # The data factory name. It must be globally unique.
 df_name = 'salesrepdf'
@@ -46,7 +47,7 @@ if ENVIRONMENT == 'development':
     
 else:
     CONTAINER_NAME = 'salesrepblob'
-    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:salesrepdbserver.database.windows.net,1433;Database=salesrepdb;Uid=berlin;Pwd=Youtube@123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
+    DB_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesreportingappstacc;AccountKey=xeEMnCTq0CBSEgvdMp5z+YSfnsXRfmY9YXaVjEmxZ9v2E6zFnsjrKTgLGZz6blUBNVOA+ppr9aYY+AStsjtidw==;EndpointSuffix=core.windows.net'
     pipeline_postfix = 'Prod'
     pipelines_of_interest = [
     'Ingest Products Prod', 
