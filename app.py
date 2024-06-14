@@ -12,7 +12,7 @@ import pytz
 app = Flask(__name__, static_url_path='', static_folder='static')
 
 # Azure Storage Account settings
-CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesreportingappstacc  ;AccountKey=w1YCSmzZ5nQrkkGXWSNljI2tOH1VIvKHp8HPO5MgJGNInMvf24swHZ+WELNuMq6XyZmL4T97hAL8+AStGT8bXA==;EndpointSuffix=core.windows.net'
+CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesreportingappstacc;AccountKey=w1YCSmzZ5nQrkkGXWSNljI2tOH1VIvKHp8HPO5MgJGNInMvf24swHZ+WELNuMq6XyZmL4T97hAL8+AStGT8bXA==;EndpointSuffix=core.windows.net'
 
 # Determine the environment and set the container name
 # ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
