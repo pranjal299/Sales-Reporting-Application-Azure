@@ -12,11 +12,7 @@ import pytz
 app = Flask(__name__, static_url_path='', static_folder='static')
 
 # Azure Storage Account settings
-CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesreportingappstacc;AccountKey=w1YCSmzZ5nQrkkGXWSNljI2tOH1VIvKHp8HPO5MgJGNInMvf24swHZ+WELNuMq6XyZmL4T97hAL8+AStGT8bXA==;EndpointSuffix=core.windows.net'
-
-# Determine the environment and set the container name
-# ENVIRONMENT = os.getenv('FLASK_ENV', 'development')
-ENVIRONMENT = 'prod'
+CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=salesreportingstacc;AccountKey=97+RZ/EBfDX+99pjcSX7i8j/bf50mzl+MyiGUyymQTO3jt2fVMh2Zg8XtQQxbOfcIuf5fsptr/Ei+AStYPe3WQ==;EndpointSuffix=core.windows.net"
 
 # Azure subscription ID
 subscription_id = '8c10f661-e991-47d6-85c8-50e6fe1af3e6'
@@ -33,29 +29,11 @@ credentials = ClientSecretCredential(client_id='2880c44e-18ce-4ed5-891a-c722a84b
 resource_client = ResourceManagementClient(credentials, subscription_id)
 adf_client = DataFactoryManagementClient(credentials, subscription_id)
 
-if ENVIRONMENT == 'development':
-    CONTAINER_NAME = 'salesrepblobdev'
-    DB_CONNECTION_STRING = 'Driver={ODBC Driver 17 for SQL Server};Server=tcp:salesrepdbserver.database.windows.net,1433;Database=salesrepdbdev;Uid=berlin;Pwd=Youtube@123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
-    pipeline_postfix = 'Dev'
-    pipelines_of_interest = [
-    'Ingest Products Dev', 
-    'Ingest Payments Dev', 
-    'Ingest Customers Dev', 
-    'Ingest Employees Dev', 
-    'Ingest Transactions Dev'
-]
-    
-else:
-    CONTAINER_NAME = 'salesrepblob'
-    DB_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesreportingappstacc;AccountKey=xeEMnCTq0CBSEgvdMp5z+YSfnsXRfmY9YXaVjEmxZ9v2E6zFnsjrKTgLGZz6blUBNVOA+ppr9aYY+AStsjtidw==;EndpointSuffix=core.windows.net'
-    pipeline_postfix = 'Prod'
-    pipelines_of_interest = [
-    'Ingest Products Prod', 
-    'Ingest Payments Prod', 
-    'Ingest Customers Prod', 
-    'Ingest Employees Prod', 
-    'Ingest Transactions Prod'
-]
+
+CONTAINER_NAME = 'salesrepblob'
+DB_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesreportingappstacc;AccountKey=xeEMnCTq0CBSEgvdMp5z+YSfnsXRfmY9YXaVjEmxZ9v2E6zFnsjrKTgLGZz6blUBNVOA+ppr9aYY+AStsjtidw==;EndpointSuffix=core.windows.net'
+pipeline_postfix = 'Prod'
+pipelines_of_interest = ['Ingest Products Prod', 'Ingest Payments Prod', 'Ingest Customers Prod', 'Ingest Employees Prod', 'Ingest Transactions Prod']
 
 blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
 
