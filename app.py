@@ -29,9 +29,16 @@ credentials = ClientSecretCredential(client_id='2880c44e-18ce-4ed5-891a-c722a84b
 resource_client = ResourceManagementClient(credentials, subscription_id)
 adf_client = DataFactoryManagementClient(credentials, subscription_id)
 
+# Define the connection parameters
+server = 'salesreportingappdbserver.database.windows.net'
+database = 'salesreportingappdb'
+username = 'berlin'
+password = 'Youtube@123'
+
+# Construct the connection string
+DB_CONNECTION_STRING = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}'
 
 CONTAINER_NAME = 'salesrepblob'
-DB_CONNECTION_STRING = 'Driver={ODBC Driver 18 for SQL Server};Server=tcp:salesreportingappdbserver.database.windows.net,1433;Database=salesreportingappdb;Uid=berlin;Pwd=Youtube@123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
 pipeline_postfix = 'Prod'
 pipelines_of_interest = ['Ingest Products Prod', 'Ingest Payments Prod', 'Ingest Customers Prod', 'Ingest Employees Prod', 'Ingest Transactions Prod']
 
