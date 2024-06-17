@@ -31,7 +31,7 @@ adf_client = DataFactoryManagementClient(credentials, subscription_id)
 
 
 CONTAINER_NAME = 'salesrepblob'
-DB_CONNECTION_STRING = 'DefaultEndpointsProtocol=https;AccountName=salesreportingappstacc;AccountKey=xeEMnCTq0CBSEgvdMp5z+YSfnsXRfmY9YXaVjEmxZ9v2E6zFnsjrKTgLGZz6blUBNVOA+ppr9aYY+AStsjtidw==;EndpointSuffix=core.windows.net'
+DB_CONNECTION_STRING = 'Driver={ODBC Driver 18 for SQL Server};Server=tcp:salesreportingappdbserver.database.windows.net,1433;Database=salesreportingappdb;Uid=berlin;Pwd=Youtube@123;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
 pipeline_postfix = 'Prod'
 pipelines_of_interest = ['Ingest Products Prod', 'Ingest Payments Prod', 'Ingest Customers Prod', 'Ingest Employees Prod', 'Ingest Transactions Prod']
 
