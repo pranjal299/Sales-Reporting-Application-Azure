@@ -131,15 +131,21 @@ def create_tables():
     cursor = conn.cursor()
     # Retrieve all .sql files from the specified directory
     sql_files = [file for file in os.listdir('scripts/DDL') if file.endswith('.sql')]
-    # Sort the files: 'dim' files first, then others, then 'fact' files last
+    # Sort the files: 'dim' files first, then 'metrics' files, then others, then 'fact' files last
     dim_files = [file for file in sql_files if 'dim' in file]
+    metrics_files = [file for file in sql_files if 'metrics' in file]
     fact_files = [file for file in sql_files if 'fact' in file]
-    sorted_files = dim_files + fact_files
+    other_files = [file for file in sql_files if file not in dim_files and file not in metrics_files and file not in fact_files]
+    sorted_files = dim_files + metrics_files + other_files + fact_files
     # Execute each SQL file in the sorted order
     for file in sorted_files:
         with open(os.path.join('scripts/DDL', file), 'r') as f:
             sql = f.read()
-            cursor.execute(sql)
+            # Split the SQL script at each 'GO' command
+            sql_commands = sql.split('GO')
+            for command in sql_commands:
+                if command.strip():  # Skip empty commands
+                    cursor.execute(command)
     conn.commit()
     return jsonify({'status': 'success', 'message': 'All tables have been created.'})
 
