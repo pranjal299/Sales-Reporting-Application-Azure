@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import time
 import os
 import pytz
+import pyodbc
 
 app = Flask(__name__, static_url_path='', static_folder='static')
 
@@ -21,10 +22,10 @@ subscription_id = '8c10f661-e991-47d6-85c8-50e6fe1af3e6'
 rg_name = 'salesreportingapplication_group'
 
 # The data factory name. It must be globally unique.
-df_name = 'salesrepdf'
+df_name = 'salesreportingappadf'
 
 # Specify your Active Directory client ID, client secret, and tenant ID
-credentials = ClientSecretCredential(client_id='2880c44e-18ce-4ed5-891a-c722a84b92c4', client_secret='KLE8Q~tdBNsSVJKXw0oJ2Po.eGd~8VD8Nerv2apd', tenant_id='c2f20835-6843-45b2-ad68-c9280184ebcb') 
+credentials = ClientSecretCredential(client_id='259fe23b-6bf9-41d8-82bb-2d5cdb209949', client_secret='YourSecurePasswordHere', tenant_id='60956884-10ad-40fa-863d-4f32c1e3a37a') 
 
 resource_client = ResourceManagementClient(credentials, subscription_id)
 adf_client = DataFactoryManagementClient(credentials, subscription_id)
@@ -126,8 +127,6 @@ def delete_tables():
 
 @app.route('/create-tables', methods=['POST'])
 def create_tables():
-    import pyodbc
-    import os
     conn = pyodbc.connect(DB_CONNECTION_STRING)
     cursor = conn.cursor()
     # Retrieve all .sql files from the specified directory
@@ -197,6 +196,53 @@ def load_specific_table_data(table_name):
     table_data = [dict(zip(columns, row)) for row in rows]
 
     return jsonify(table_data)
+
+@app.route('/stored_procedures')
+def stored_procedures():
+    return render_template('stored_procedures.html')
+
+@app.route('/list-stored-procedures')
+def list_stored_procedures():
+    conn = pyodbc.connect(DB_CONNECTION_STRING)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT name 
+        FROM sys.procedures
+    """)
+    procedures = [procedure[0] for procedure in cursor.fetchall()]
+    return jsonify(procedures=procedures)
+
+@app.route('/delete-stored-procedures', methods=['POST'])
+def delete_stored_procedures():
+    conn = pyodbc.connect(DB_CONNECTION_STRING)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT name 
+        FROM sys.procedures
+    """)
+    procedures = [procedure[0] for procedure in cursor.fetchall()]
+    for procedure in procedures:
+        drop_query = f"DROP PROCEDURE {procedure}"
+        cursor.execute(drop_query)
+    conn.commit()
+    return jsonify({'status': 'success', 'message': 'All stored procedures have been deleted.'})
+
+@app.route('/create-stored-procedures', methods=['POST'])
+def create_stored_procedures():
+    conn = pyodbc.connect(DB_CONNECTION_STRING)
+    cursor = conn.cursor()
+    sql_files = [file for file in os.listdir('scripts/StoredProcedures') if file.endswith('.sql')]
+    for file in sql_files:
+        with open(os.path.join('scripts/StoredProcedures', file), 'r') as f:
+            sql = f.read()
+            # Split the SQL script at each 'GO' command
+            sql_commands = sql.split('GO')
+            for command in sql_commands:
+                if command.strip():  # Skip empty commands
+                    cursor.execute(command)
+    conn.commit()
+    return jsonify({'status': 'success', 'message': 'All stored procedures have been created.'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
