@@ -40,6 +40,8 @@ nav ul {
 
 nav ul li {
     padding: 10px 20px;
+    white-space: nowrap; /* Prevent wrapping of text */
+
 }
 
 nav ul li a {
