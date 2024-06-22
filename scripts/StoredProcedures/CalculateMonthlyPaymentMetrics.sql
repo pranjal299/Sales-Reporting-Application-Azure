@@ -1,19 +1,6 @@
 CREATE PROCEDURE sp_CalculateMonthlyPaymentMetrics
 AS
 BEGIN
-    -- Create a table to store monthly metrics
-    IF OBJECT_ID('MonthlyPaymentMetrics', 'U') IS NOT NULL
-        TRUNCATE TABLE MonthlyPaymentMetrics;
-    ELSE
-        CREATE TABLE MonthlyPaymentMetrics (
-            month_year NVARCHAR(7),
-            payment_id INT,
-            payment_type NVARCHAR(20),
-            unique_customer_usage INT,
-            total_times_used INT,
-            total_revenue DECIMAL(18, 2)
-            -- Optionally add avg_money_spent_per_order/product
-        );
 
     -- Calculate metrics
     WITH PaymentSales AS (

@@ -1,18 +1,6 @@
 CREATE PROCEDURE sp_CalculateMonthlyProductMetrics
 AS
 BEGIN
-    -- Create a table to store monthly metrics
-    IF OBJECT_ID('MonthlyProductMetrics', 'U') IS NOT NULL
-        TRUNCATE TABLE MonthlyProductMetrics;
-    ELSE
-        CREATE TABLE MonthlyProductMetrics (
-            month_year NVARCHAR(7),
-            product_category NVARCHAR(50),
-            product_id INT,
-            products_sold INT,
-            total_money_made DECIMAL(18, 2)
-            -- Optionally add avg_money_made_per_product
-        );
 
     -- Calculate metrics
     WITH ProductSales AS (

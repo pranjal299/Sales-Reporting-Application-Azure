@@ -1,19 +1,6 @@
 CREATE PROCEDURE sp_CalculateMonthlyCustomerMetrics
 AS
 BEGIN
-    -- Create a table to store monthly metrics
-    IF OBJECT_ID('MonthlyCustomerMetrics', 'U') IS NOT NULL
-        TRUNCATE TABLE MonthlyCustomerMetrics;
-    ELSE
-        CREATE TABLE MonthlyCustomerMetrics (
-            month_year NVARCHAR(7),
-            customer_state NVARCHAR(20),
-            customer_id INT,
-            total_products_bought INT,
-            total_money_spent DECIMAL(18, 2)
-            -- Optionally add avg_money_spent_per_order/product
-        );
-
     -- Calculate metrics
     WITH CustomerSales AS (
         SELECT

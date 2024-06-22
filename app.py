@@ -149,9 +149,9 @@ def create_tables():
     conn.commit()
     return jsonify({'status': 'success', 'message': 'All tables have been created.'})
 
-@app.route('/data_flow')
-def data_flow():
-    return render_template('data_flow.html')
+@app.route('/table_data')
+def table_data():
+    return render_template('table_data.html')
 
 @app.route('/pipeline-status')
 def pipeline_status():
@@ -191,17 +191,21 @@ def load_specific_table_data(table_name):
     cursor = conn.cursor()
 
     # Validate table name to prevent SQL injection
-    valid_tables = ['Products', 'Customers', 'Employees', 'Payments', 'Transactions']
+    valid_tables = [
+        'Products', 'Customers', 'Employees', 'Payments', 'Transactions',
+        'MonthlyCustomerMetrics', 'MonthlyEmployeeMetrics', 'MonthlyPaymentMetrics', 'MonthlyProductMetrics'
+    ]
     if table_name not in valid_tables:
         return jsonify({"error": "Invalid table name"}), 400
 
-    # Fetch first three rows from the specific table
+    # Fetch first five rows from the specific table
     cursor.execute(f"SELECT TOP 5 * FROM dbo.{table_name}")
     columns = [column[0] for column in cursor.description]
     rows = cursor.fetchall()
     table_data = [dict(zip(columns, row)) for row in rows]
 
     return jsonify(table_data)
+
 
 @app.route('/stored_procedures')
 def stored_procedures():
