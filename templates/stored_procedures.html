@@ -4,154 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Reporting System - Stored Procedures</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <style>
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h2 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .section {
-            background-color: #fff;
-            padding: 20px;
-            margin-top: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .section + .section {
-            margin-top: 20px;
-        }
-
-        .section-header {
-            margin-bottom: 10px;
-            font-size: 20px;
-            color: #333;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-
-        .blob-list {
-            text-align: left;
-            padding-top: 10px;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin-top: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .delete-btn {
-            background-color: #dc3545;
-        }
-
-        .delete-btn:hover {
-            background-color: #bd2130;
-        }
-
-        #proceduresList {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 10px;
-            margin-top: 20px;
-            margin-bottom: 15px;
-            min-height: 50px;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        header {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        nav {
-            width: 100%;
-            background-color: #333;
-        }
-
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        nav ul li {
-            padding: 10px 20px;
-        }
-
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-
-        nav ul li a:hover {
-            background-color: #5cb85c;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            max-width: 500px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .create-procedures-btn {
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin-top: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .create-procedures-btn:hover {
-            background-color: #4cae4c;
-        }
-
-    </style>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-styles.css') }}">
 </head>
 <body>
     <header>
@@ -226,9 +80,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).
-
-            then(response => {
+            }).then(response => {
                 if (response.ok) {
                     alert('Procedures have been created.');
                     // Refresh the list of procedures
