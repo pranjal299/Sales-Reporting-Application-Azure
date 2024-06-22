@@ -253,6 +253,9 @@ def create_stored_procedures():
     conn.commit()
     return jsonify({'status': 'success', 'message': 'All stored procedures have been created.'})
 
+@app.route('/visualizations')
+def visualizations():
+    return render_template('visualizations.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
