@@ -6,3 +6,4 @@ azure-mgmt-resource
 azure-mgmt-datafactory
 pytz
 pandas
+together

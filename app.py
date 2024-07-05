@@ -9,6 +9,8 @@ import time
 import os
 import pytz
 import pyodbc
+import requests
+from together import Together
 
 app = Flask(__name__, static_url_path='', static_folder='static')
 
@@ -44,6 +46,9 @@ pipeline_postfix = 'Prod'
 pipelines_of_interest = ['Ingest Products Prod', 'Ingest Payments Prod', 'Ingest Customers Prod', 'Ingest Employees Prod', 'Ingest Transactions Prod']
 
 blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
+
+API_KEY = '8e8e05d2ba164b2a477e7b6874f2bbf7c49d1f93450b1fb352625b0587e479ca'
+client = Together(api_key=API_KEY)
 
 @app.route('/')
 def index():
@@ -259,14 +264,23 @@ def explore_data():
 @app.route('/submit-query', methods=['POST'])
 def submit_query():
     query = request.json.get('query')
-    # For demonstration, let's assume we have a simple mapping from queries to SQL commands.
-    query_mapping = {
-        'show me all products': "SELECT * FROM Products",
-        'list all customers': "SELECT * FROM Customers",
-        'show all transactions': "SELECT * FROM Transactions"
-    }
-    sql_query = query_mapping.get(query.lower())
-    if sql_query:
+    
+    # Get the SQL query from the Together API
+    response = client.chat.completions.create(
+        model="meta-llama/Llama-3-70b-chat-hf",
+        messages=[
+            {"role": "system", "content": "You are a Natural Language to SQL Query Converter. The queries should be compatible with Azure SQL. Give the SQL query directly without anything else before or after. The schemas of tables are as follows - a) Transactions - transaction_id, timestamp, customer_id, product_id, employee_id, payment_id, quantity, total_amount b) Products - product_id, product_name, product_category, unit_price c) Payments - payment_id, payment_type d) Employees - employee_id, employee_name, employee_ssn, employee_phone, employee_state, employee_city, employee_postal e) Customers - customer_id, customer_first_name, customer_last_name, customer_city, customer_state, customer_postal, customer_email, customer_phone"},
+            {"role": "user", "content": query},
+        ],
+    )
+
+    if response and response.choices and len(response.choices) > 0:
+        sql_query = response.choices[0].message.content.strip()
+    else:
+        return jsonify(results=[], sql_query="Error generating SQL query from the model.")
+
+    try:
+        # Execute the SQL query
         conn = pyodbc.connect(DB_CONNECTION_STRING)
         cursor = conn.cursor()
         cursor.execute(sql_query)
@@ -274,8 +288,9 @@ def submit_query():
         rows = cursor.fetchall()
         results = [dict(zip(columns, row)) for row in rows]
         return jsonify(results=results, sql_query=sql_query)
-    else:
-        return jsonify(results=[], sql_query="No valid SQL query generated.")
+    except Exception as e:
+        print(str(e))
+        return jsonify(results=[], sql_query=sql_query, error=str(e))
 
 if __name__ == '__main__':
     app.run(debug=True)
