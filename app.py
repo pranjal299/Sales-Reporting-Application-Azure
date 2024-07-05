@@ -85,7 +85,6 @@ def tables():
 
 @app.route('/list-tables')
 def list_tables():
-    import pyodbc
     conn = pyodbc.connect(DB_CONNECTION_STRING)
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM sys.tables")
@@ -94,8 +93,6 @@ def list_tables():
 
 @app.route('/delete-tables', methods=['POST'])
 def delete_tables():
-    import pyodbc
-    # Establish the database connection
     conn = pyodbc.connect(DB_CONNECTION_STRING)
     cursor = conn.cursor()
     # Step 1: Identify and drop foreign key constraints
@@ -186,7 +183,6 @@ def pipeline_status():
 
 @app.route('/load-table-data/<table_name>')
 def load_specific_table_data(table_name):
-    import pyodbc
     conn = pyodbc.connect(DB_CONNECTION_STRING)
     cursor = conn.cursor()
 
@@ -205,7 +201,6 @@ def load_specific_table_data(table_name):
     table_data = [dict(zip(columns, row)) for row in rows]
 
     return jsonify(table_data)
-
 
 @app.route('/stored_procedures')
 def stored_procedures():
@@ -256,6 +251,31 @@ def create_stored_procedures():
 @app.route('/visualizations')
 def visualizations():
     return render_template('visualizations.html')
+
+@app.route('/explore_data')
+def explore_data():
+    return render_template('explore_data.html')
+
+@app.route('/submit-query', methods=['POST'])
+def submit_query():
+    query = request.json.get('query')
+    # For demonstration, let's assume we have a simple mapping from queries to SQL commands.
+    query_mapping = {
+        'show me all products': "SELECT * FROM Products",
+        'list all customers': "SELECT * FROM Customers",
+        'show all transactions': "SELECT * FROM Transactions"
+    }
+    sql_query = query_mapping.get(query.lower())
+    if sql_query:
+        conn = pyodbc.connect(DB_CONNECTION_STRING)
+        cursor = conn.cursor()
+        cursor.execute(sql_query)
+        columns = [column[0] for column in cursor.description]
+        rows = cursor.fetchall()
+        results = [dict(zip(columns, row)) for row in rows]
+        return jsonify(results=results, sql_query=sql_query)
+    else:
+        return jsonify(results=[], sql_query="No valid SQL query generated.")
 
 if __name__ == '__main__':
     app.run(debug=True)
