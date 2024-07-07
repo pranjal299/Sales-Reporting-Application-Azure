@@ -1,77 +1,69 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sales Reporting System - Explore Data</title>
-        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-styles.css') }}">
-        <style>
-            .create-tables-btn {
-                background-color: #5cb85c;
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                margin-top: 0px;
-                cursor: pointer;
-                border-radius: 5px;
-                font-size: 16px;
-                transition: background-color 0.3s ease;
-            }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Reporting System - Explore Data</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-styles.css') }}">
+    <style>
+        .create-tables-btn {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 0px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
 
-            .form-group {
-                display: flex;
-                justify-content: start;
-                align-items: center;
-                gap: 10px;
-            }
+        .form-group {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            gap: 10px;
+        }
 
-            .form-control {
-                flex: 1;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                font-size: 16px;
-                height: 20px; /* Match the height of the button */
-            }
+        .form-control {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            height: 20px;
+        }
 
-            .overflow-container {
-                overflow-x: auto;
-                margin-top: 20px;
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            th, td {
-                border: 1px solid #ddd;
-                text-align: left;
-                padding: 8px;
-            }
-
-            th {
-                background-color: #f2f2f2;
-            }
-
-            tr:nth-child(even) {
-                background-color: #f9f9f9;
-            }
-
-            table, th, td {
-                font-size: 0.9em;
-            }
-            
-            #exportOptions {
+        .overflow-container {
+            overflow-x: auto;
             margin-top: 20px;
-            }
-            
-            #exportOptions button {
-            margin-right: 10px;
-            }
+        }
 
-             .results-header {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table, th, td {
+            font-size: 0.9em;
+        }
+
+        .results-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -99,22 +91,88 @@
             margin-right: 5px;
         }
 
-        </style>
-    </head>
-    <body>
-        <header>
-            <h1>Sales Reporting System</h1>
-        </header>
-        <nav>
-            <ul>
-                <li><a href="/">Files</a></li>
-                <li><a href="/tables">Tables</a></li>
-                <li><a href="/stored_procedures">Stored Procedures</a></li>
-                <li><a href="/table_data">Table Data</a></li>
-                <li><a href="/visualizations">Visualizations</a></li>
-                <li><a href="/explore_data">QuickQueryAI</a></li>
-            </ul>
-        </nav>
+        #queryHistory {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }
+
+         .query-history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #queryHistory h3 {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1; /* Ensure text doesn't have extra line height */
+        }
+
+        .clear-history-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            height: 16px; /* Match the height of the icon */
+        }
+
+        .clear-history-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: #666;
+            transition: fill 0.3s ease;
+            display: block; /* Ensure the SVG doesn't have extra space */
+        }
+
+        .clear-history-btn:hover svg {
+            fill: #dc3545;
+        }
+
+        /* Add this new rule to ensure vertical centering */
+        .query-history-header > * {
+            display: flex;
+            align-items: center;
+        }
+        
+        .history-item {
+            cursor: pointer;
+            padding: 8px 5px;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .history-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sales Reporting System</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="/">Files</a></li>
+            <li><a href="/tables">Tables</a></li>
+            <li><a href="/stored_procedures">Stored Procedures</a></li>
+            <li><a href="/table_data">Table Data</a></li>
+            <li><a href="/visualizations">Visualizations</a></li>
+            <li><a href="/explore_data">QuickQueryAI</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <h2>QuickQueryAI</h2>
         <div class="section">
@@ -132,10 +190,23 @@
             <div id="queryResultsContainer">
                 <!-- Query results and export buttons will be displayed here -->
             </div>
+            <div id="queryHistory">
+                <div class="query-history-header">
+                    <h3>Query History</h3>
+                    <button id="clearHistoryBtn" class="clear-history-btn" title="Clear History">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="historyList"></div>
+            </div>
         </div>
     </div>
     
     <script>
+        let queryHistory = [];
+
         document.getElementById('submitQueryBtn').addEventListener('click', function() {
             const query = document.getElementById('queryInput').value;
             if (query) {
@@ -216,6 +287,9 @@
                 } else {
                     queryResultsContainer.innerHTML = '<p>No results found.</p>';
                 }
+
+                // Add query to history
+                addToHistory(query);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -252,7 +326,62 @@
                 console.error('Error:', error);
             });
         }
+
+        function addToHistory(query) {
+            // Add to front of array and limit to 10 items
+            queryHistory.unshift(query);
+            if (queryHistory.length > 10) {
+                queryHistory.pop();
+            }
+            updateHistoryDisplay();
+
+            // Save to server
+            fetch('/save-query-history', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ history: queryHistory })
+            });
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            queryHistory.forEach((query, index) => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.textContent = `${index + 1}. ${query.substring(0, 60)}${query.length > 60 ? '...' : ''}`;
+                item.onclick = () => {
+                    document.getElementById('queryInput').value = query;
+                };
+                historyList.appendChild(item);
+            });
+        }
+
+        function clearHistory() {
+            queryHistory = [];
+            updateHistoryDisplay();
+            
+            // Clear history on the server
+            fetch('/clear-query-history', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+
+        document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+
+        // Load query history on page load
+        fetch('/get-query-history')
+            .then(response => response.json())
+            .then(data => {
+                queryHistory = data.history;
+                updateHistoryDisplay();
+            });
+
     </script>
-    
-    </body>
-    </html>
+</body>
+</html>

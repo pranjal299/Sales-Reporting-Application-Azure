@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template, jsonify, send_file
+from flask import Flask, request, render_template, jsonify, send_file, session
+from flask_session import Session
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential 
 from azure.mgmt.resource import ResourceManagementClient
@@ -15,6 +16,8 @@ import pandas as pd
 from io import BytesIO
 
 app = Flask(__name__, static_url_path='', static_folder='static')
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 
 # Azure Storage Account settings
 CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=salesreportingstacc;AccountKey=97+RZ/EBfDX+99pjcSX7i8j/bf50mzl+MyiGUyymQTO3jt2fVMh2Zg8XtQQxbOfcIuf5fsptr/Ei+AStYPe3WQ==;EndpointSuffix=core.windows.net"
@@ -314,6 +317,22 @@ def export_query_results():
         return send_file(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', as_attachment=True, download_name='query_results.xlsx')
     else:
         return jsonify({'error': 'Unsupported format'}), 400
+
+@app.route('/save-query-history', methods=['POST'])
+def save_query_history():
+    history = request.json.get('history', [])
+    session['query_history'] = history
+    return jsonify({'status': 'success'})
+
+@app.route('/get-query-history')
+def get_query_history():
+    history = session.get('query_history', [])
+    return jsonify({'history': history})
+
+@app.route('/clear-query-history', methods=['POST'])
+def clear_query_history():
+    session['query_history'] = []
+    return jsonify({'status': 'success'})
 
 if __name__ == '__main__':
     app.run(debug=True)
