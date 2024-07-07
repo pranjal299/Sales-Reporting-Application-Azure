@@ -71,6 +71,34 @@
             margin-right: 10px;
             }
 
+             .results-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .export-btn {
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            color: #212529;
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .export-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .export-btn svg {
+            margin-right: 5px;
+        }
+
         </style>
     </head>
     <body>
@@ -87,38 +115,35 @@
                 <li><a href="/explore_data">QuickQueryAI</a></li>
             </ul>
         </nav>
-        <div class="container">
-            <h2>QuickQueryAI</h2>
-            <div class="section">
-                <div class="section-header">Natural Language Query</div>
-                <p>Enter your query below to explore the data.</p>
-                <br>
-                <div class="form-group">
-                    <input type="text" id="queryInput" class="form-control" placeholder="Enter your query here...">
-                    <button type="button" id="submitQueryBtn" class="create-tables-btn">Submit</button>
-                </div>
-                <br>
-                <div id="queryDetails">
-                    <!-- SQL query and results will be displayed here -->
-                </div>
-                <div id="queryResults">
-                    <!-- Query results will be displayed here -->
-                </div>
-                <div id="exportOptions" style="display: none;">
-                <button type="button" onclick="exportResults('csv')">Export as CSV</button>
-                <button type="button" onclick="exportResults('excel')">Export as Excel</button>
-                </div>
+    <div class="container">
+        <h2>QuickQueryAI</h2>
+        <div class="section">
+            <div class="section-header">Natural Language Query</div>
+            <p>Enter your query below to explore the data.</p>
+            <br>
+            <div class="form-group">
+                <input type="text" id="queryInput" class="form-control" placeholder="Enter your query here...">
+                <button type="button" id="submitQueryBtn" class="create-tables-btn">Submit</button>
+            </div>
+            <br>
+            <div id="queryDetails">
+                <!-- SQL query will be displayed here -->
+            </div>
+            <div id="queryResultsContainer">
+                <!-- Query results and export buttons will be displayed here -->
             </div>
         </div>
-        <script>
-            document.getElementById('submitQueryBtn').addEventListener('click', function() {
-                const query = document.getElementById('queryInput').value;
-                if (query) {
-                    submitQuery(query);
-                } else {
-                    alert('Please enter a query first.');
-                }
-            });
+    </div>
+    
+    <script>
+        document.getElementById('submitQueryBtn').addEventListener('click', function() {
+            const query = document.getElementById('queryInput').value;
+            if (query) {
+                submitQuery(query);
+            } else {
+                alert('Please enter a query first.');
+            }
+        });
 
         function submitQuery(query) {
             fetch(`/submit-query`, {
@@ -131,13 +156,35 @@
             .then(response => response.json())
             .then(data => {
                 const queryDetailsDiv = document.getElementById('queryDetails');
-                const queryResultsDiv = document.getElementById('queryResults');
-                const exportOptionsDiv = document.getElementById('exportOptions');
+                const queryResultsContainer = document.getElementById('queryResultsContainer');
                 
                 queryDetailsDiv.innerHTML = `<h3>SQL Query</h3><pre>${data.sql_query}</pre>`;
-                queryResultsDiv.innerHTML = `<br><h3>Query Results</h3>`;
                 
                 if (data.results && data.results.length > 0) {
+                    queryResultsContainer.innerHTML = `
+                        <div class="results-header">
+                            <h3>Query Results</h3>
+                            <div>
+                                <button type="button" onclick="exportResults('csv')" class="export-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                    CSV
+                                </button>
+                                <button type="button" onclick="exportResults('excel')" class="export-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                    Excel
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
                     const overflowContainer = document.createElement('div');
                     overflowContainer.className = 'overflow-container';
 
@@ -165,14 +212,9 @@
                     table.appendChild(tbody);
 
                     overflowContainer.appendChild(table);
-                    queryResultsDiv.appendChild(overflowContainer);
-                    
-                    // Show export options
-                    exportOptionsDiv.style.display = 'block';
+                    queryResultsContainer.appendChild(overflowContainer);
                 } else {
-                    queryResultsDiv.innerHTML += '<p>No results found.</p>';
-                    // Hide export options if no results
-                    exportOptionsDiv.style.display = 'none';
+                    queryResultsContainer.innerHTML = '<p>No results found.</p>';
                 }
             })
             .catch(error => {
@@ -181,9 +223,9 @@
         }
 
         function exportResults(format) {
-            const queryResults = Array.from(document.querySelectorAll('#queryResults table tr')).map(row => {
+            const queryResults = Array.from(document.querySelectorAll('#queryResultsContainer table tr')).map(row => {
                 return Array.from(row.cells).reduce((acc, cell, index) => {
-                    acc[document.querySelector('#queryResults table thead th:nth-child(' + (index + 1) + ')').textContent] = cell.textContent;
+                    acc[document.querySelector('#queryResultsContainer table thead th:nth-child(' + (index + 1) + ')').textContent] = cell.textContent;
                     return acc;
                 }, {});
             }).slice(1); // Remove header row
@@ -210,7 +252,7 @@
                 console.error('Error:', error);
             });
         }
-
-        </script>
+    </script>
+    
     </body>
     </html>
