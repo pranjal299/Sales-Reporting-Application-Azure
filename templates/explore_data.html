@@ -91,7 +91,7 @@
             margin-right: 5px;
         }
 
-        #queryHistory {
+        #queryHistory, #queryTemplates {
             margin-top: 20px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -99,17 +99,17 @@
             font-family: Arial, sans-serif;
         }
 
-         .query-history-header {
+        .query-history-header, .query-templates-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
 
-        #queryHistory h3 {
+        #queryHistory h3, #queryTemplates h3 {
             margin: 0;
-            font-size: 16px;
-            line-height: 1; /* Ensure text doesn't have extra line height */
+            font-size: 14px;
+            line-height: 1;
         }
 
         .clear-history-btn {
@@ -119,7 +119,7 @@
             padding: 0;
             display: flex;
             align-items: center;
-            height: 16px; /* Match the height of the icon */
+            height: 16px;
         }
 
         .clear-history-btn svg {
@@ -127,36 +127,73 @@
             height: 16px;
             fill: #666;
             transition: fill 0.3s ease;
-            display: block; /* Ensure the SVG doesn't have extra space */
+            display: block;
         }
 
         .clear-history-btn:hover svg {
             fill: #dc3545;
         }
 
-        /* Add this new rule to ensure vertical centering */
-        .query-history-header > * {
+        .query-history-header > *, .query-templates-header > * {
             display: flex;
             align-items: center;
         }
-        
-        .history-item {
-            cursor: pointer;
-            padding: 8px 5px;
-            border-bottom: 1px solid #eee;
-            font-size: 12px;
-            line-height: 1.4;
+
+        #templateList, #historyList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        .history-item:hover {
+        .history-item, .template-item {
+            cursor: pointer;
+            padding: 8px 5px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.4;
+            transition: background-color 0.3s ease;
+        }
+
+        .history-item:hover, .template-item:hover {
             background-color: #f5f5f5;
         }
 
-        .history-item:last-child {
-            border-bottom: none;
+        .instructions {
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
         }
 
+        #queryDetails {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
 
+        #queryDetails h3 {
+            margin-top: 0;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        #queryDetails pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            background-color: #fff;
+            border: 1px solid #e1e4e8;
+            border-radius: 3px;
+            padding: 10px;
+            font-size: 14px;
+            line-height: 1.45;
+            max-height: 300px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -177,15 +214,22 @@
         <h2>QuickQueryAI</h2>
         <div class="section">
             <div class="section-header">Natural Language Query</div>
-            <p>Enter your query below to explore the data.</p>
+            <p>
+                Enter your question about the sales data in the input field below, or choose one of the query templates as an example. 
+                Our AI will convert your natural language query into SQL and fetch the results for you.
+            </p>
+            <div id="queryTemplates">
+                <h3>Query Templates</h3>
+                <div id="templateList"></div>
+            </div>
             <br>
             <div class="form-group">
                 <input type="text" id="queryInput" class="form-control" placeholder="Enter your query here...">
                 <button type="button" id="submitQueryBtn" class="create-tables-btn">Submit</button>
             </div>
-            <br>
-            <div id="queryDetails">
-                <!-- SQL query will be displayed here -->
+            <div id="queryDetails" style="display: none;">
+                <h3>SQL Query Generated</h3>
+                <pre><code id="sqlQueryCode"></code></pre>
             </div>
             <div id="queryResultsContainer">
                 <!-- Query results and export buttons will be displayed here -->
@@ -227,9 +271,12 @@
             .then(response => response.json())
             .then(data => {
                 const queryDetailsDiv = document.getElementById('queryDetails');
+                const sqlQueryCode = document.getElementById('sqlQueryCode');
                 const queryResultsContainer = document.getElementById('queryResultsContainer');
                 
-                queryDetailsDiv.innerHTML = `<h3>SQL Query</h3><pre>${data.sql_query}</pre>`;
+                // Display the SQL query
+                sqlQueryCode.textContent = data.sql_query;
+                queryDetailsDiv.style.display = 'block';
                 
                 if (data.results && data.results.length > 0) {
                     queryResultsContainer.innerHTML = `
@@ -288,7 +335,6 @@
                     queryResultsContainer.innerHTML = '<p>No results found.</p>';
                 }
 
-                // Add query to history
                 addToHistory(query);
             })
             .catch(error => {
@@ -302,7 +348,7 @@
                     acc[document.querySelector('#queryResultsContainer table thead th:nth-child(' + (index + 1) + ')').textContent] = cell.textContent;
                     return acc;
                 }, {});
-            }).slice(1); // Remove header row
+            }).slice(1);
             
             fetch(`/export-query-results`, {
                 method: 'POST',
@@ -328,14 +374,12 @@
         }
 
         function addToHistory(query) {
-            // Add to front of array and limit to 10 items
             queryHistory.unshift(query);
             if (queryHistory.length > 10) {
                 queryHistory.pop();
             }
             updateHistoryDisplay();
 
-            // Save to server
             fetch('/save-query-history', {
                 method: 'POST',
                 headers: {
@@ -363,8 +407,7 @@
             queryHistory = [];
             updateHistoryDisplay();
             
-            // Clear history on the server
-            fetch('/clear-query-history', {
+        fetch('/clear-query-history', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -374,13 +417,36 @@
 
         document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
 
-        // Load query history on page load
         fetch('/get-query-history')
             .then(response => response.json())
             .then(data => {
                 queryHistory = data.history;
                 updateHistoryDisplay();
             });
+
+        const queryTemplates = [
+            { name: "Total Sales by Product", query: "What is the total sales amount for each product?" },
+            { name: "Top 5 Customers", query: "Who are the top 5 customers by total purchase amount?" },
+            { name: "Monthly Sales Trend", query: "Show the total sales amount for each month" },
+            { name: "Employee Performance", query: "Which employees have the highest total sales?" },
+            { name: "Popular Payment Methods", query: "What are the most commonly used payment methods?" }
+        ];
+
+        function populateQueryTemplates() {
+            const templateList = document.getElementById('templateList');
+            templateList.innerHTML = '';
+            queryTemplates.forEach(template => {
+                const item = document.createElement('div');
+                item.className = 'template-item';
+                item.textContent = template.name;
+                item.onclick = () => {
+                    document.getElementById('queryInput').value = template.query;
+                };
+                templateList.appendChild(item);
+            });
+        }
+
+        populateQueryTemplates();
 
     </script>
 </body>
