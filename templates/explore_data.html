@@ -119,7 +119,6 @@
             padding: 0;
             display: flex;
             align-items: center;
-            height: 16px;
         }
 
         .clear-history-btn svg {
@@ -127,7 +126,6 @@
             height: 16px;
             fill: #666;
             transition: fill 0.3s ease;
-            display: block;
         }
 
         .clear-history-btn:hover svg {
@@ -188,12 +186,139 @@
             background-color: #fff;
             border: 1px solid #e1e4e8;
             border-radius: 3px;
-            padding: 10px;
-            font-size: 14px;
-            line-height: 1.45;
-            max-height: 300px;
+            padding: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+            max-height: 250px;
             overflow-y: auto;
+            display: none;
         }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+
+.pagination button {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    color: #212529;
+    padding: 3px 8px;
+    margin: 0 3px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.pagination button:hover {
+    background-color: #e9ecef;
+}
+
+#pageInfo {
+    margin: 0 8px;
+    font-size: 0.9em;
+}
+
+.form-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .form-control {
+        flex: 1;
+        padding: 10px 40px 10px 15px;
+        border: 2px solid #ccc;
+        border-radius: 25px;
+        font-size: 16px;
+        height: 20px;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #5cb85c;
+    }
+
+    .submit-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .submit-icon:hover {
+        color: #5cb85c;
+    }
+
+    .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #5cb85c;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #queryDetails {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+
+     .collapsible-header {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    user-select: none;
+    display: flex;
+    align-items: center;
+}
+
+.collapsible-header:not(.loading)::before {
+    content: '▶ ';
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.collapsible-header.active:not(.loading)::before {
+    content: '▼ ';
+}
+
+.collapsible-header.loading {
+    padding-left: 10px;
+}
+
+    #queryDetails pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-x: auto;
+        background-color: #fff;
+        border: 1px solid #e1e4e8;
+        border-radius: 3px;
+        padding: 8px;
+        font-size: 12px;
+        line-height: 1.4;
+        max-height: 250px;
+        overflow-y: auto;
+        display: none;
+    }
+
     </style>
 </head>
 <body>
@@ -213,241 +338,327 @@
     <div class="container">
         <h2>QuickQueryAI</h2>
         <div class="section">
-            <div class="section-header">Natural Language Query</div>
-            <p>
-                Enter your question about the sales data in the input field below, or choose one of the query templates as an example. 
-                Our AI will convert your natural language query into SQL and fetch the results for you.
-            </p>
-            <div id="queryTemplates">
-                <h3>Query Templates</h3>
-                <div id="templateList"></div>
-            </div>
-            <br>
-            <div class="form-group">
-                <input type="text" id="queryInput" class="form-control" placeholder="Enter your query here...">
-                <button type="button" id="submitQueryBtn" class="create-tables-btn">Submit</button>
-            </div>
-            <div id="queryDetails" style="display: none;">
-                <h3>SQL Query Generated</h3>
-                <pre><code id="sqlQueryCode"></code></pre>
-            </div>
-            <div id="queryResultsContainer">
-                <!-- Query results and export buttons will be displayed here -->
-            </div>
-            <div id="queryHistory">
-                <div class="query-history-header">
-                    <h3>Query History</h3>
-                    <button id="clearHistoryBtn" class="clear-history-btn" title="Clear History">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z"/>
-                        </svg>
-                    </button>
-                </div>
-                <div id="historyList"></div>
-            </div>
+    <div class="section-header">Ask Your Query</div>
+    <p>
+        Enter your question about the sales data in the input field below, or choose one of the query templates as an example. 
+        Our AI will convert your natural language query into SQL and fetch the results for you.
+    </p>
+    <div id="queryTemplates">
+        <h3>Query Templates</h3>
+        <div id="templateList"></div>
+    </div>
+    <br>
+    <div class="form-group">
+        <input type="text" id="queryInput" class="form-control" placeholder="Enter your query here...">
+        <svg id="submitQueryBtn" class="submit-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+    </div>
+    <div id="queryDetails" style="display: none;">
+        <div class="collapsible-header">Show SQL Query Generated</div>
+        <pre><code id="sqlQueryCode"></code></pre>
+    </div>
+</div>
+
+<!-- Query Results Section -->
+<div id="queryResultsSection" class="section" style="display: none;">
+    <div class="results-header">
+        <div class="section-header">Results</div>
+        <div>
+            <button type="button" onclick="exportResults('csv')" class="export-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                CSV
+            </button>
+            <button type="button" onclick="exportResults('excel')" class="export-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Excel
+            </button>
         </div>
     </div>
-    
-    <script>
-        let queryHistory = [];
+    <div class="overflow-container">
+        <div id="queryResultsContainer">
+            <!-- Query results will be displayed here -->
+        </div>
+    </div>
+    <div id="paginationControls" class="pagination">
+        <button id="prevPage" onclick="changePage(-1)">Previous</button>
+        <span id="pageInfo"></span>
+        <button id="nextPage" onclick="changePage(1)">Next</button>
+    </div>
+</div>
 
-        document.getElementById('submitQueryBtn').addEventListener('click', function() {
-            const query = document.getElementById('queryInput').value;
+        <!-- Query History Section -->
+        <div class="section">
+            <div class="query-history-header">
+                <div class="section-header">Query History</div>
+                <button id="clearHistoryBtn" class="clear-history-btn" title="Clear History">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="historyList"></div>
+        </div>
+    </div>
+    <script>
+    let queryHistory = [];
+    let currentPage = 1;
+    const resultsPerPage = 10;
+    let allResults = [];
+
+    document.querySelector('#queryDetails .collapsible-header').addEventListener('click', function() {
+        this.classList.toggle('active');
+        const content = this.nextElementSibling;
+        if (content.style.display === 'block') {
+            content.style.display = 'none';
+            this.textContent = 'Show SQL Query Generated';
+        } else {
+            content.style.display = 'block';
+            this.textContent = 'Hide SQL Query Generated';
+        }
+    });
+
+    document.getElementById('submitQueryBtn').addEventListener('click', function() {
+        const query = document.getElementById('queryInput').value;
+        if (query) {
+            submitQuery(query);
+        } else {
+            alert('Please enter a query first.');
+        }
+    });
+
+    document.getElementById('queryInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const query = this.value;
             if (query) {
                 submitQuery(query);
             } else {
                 alert('Please enter a query first.');
             }
+        }
+    });
+
+    function submitQuery(query) {
+        const queryDetailsDiv = document.getElementById('queryDetails');
+        const collapsibleHeader = queryDetailsDiv.querySelector('.collapsible-header');
+        
+        // Show loading state
+        queryDetailsDiv.style.display = 'block';
+        collapsibleHeader.classList.add('loading');
+        collapsibleHeader.innerHTML = '<div class="loading-spinner"></div>Generating SQL Query';
+        collapsibleHeader.style.cursor = 'default';
+        sqlQueryCode.textContent = ''; // Clear any previous SQL query
+        sqlQueryCode.parentElement.style.display = 'none'; // Hide the SQL query display area
+
+        
+        fetch(`/submit-query`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query: query })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const sqlQueryCode = document.getElementById('sqlQueryCode');
+            const queryResultsSection = document.getElementById('queryResultsSection');
+            
+            // Display the SQL query
+            sqlQueryCode.textContent = data.sql_query;
+
+            // Reset the collapsible header state
+        collapsibleHeader.classList.remove('loading');
+        collapsibleHeader.innerHTML = 'Show SQL Query Generated';
+        collapsibleHeader.style.cursor = 'pointer';
+        collapsibleHeader.classList.remove('active');
+        sqlQueryCode.parentElement.style.display = 'none';
+
+            if (data.results && data.results.length > 0) {
+                allResults = data.results;
+                currentPage = 1;
+                queryResultsSection.style.display = 'block';
+                displayResults();
+            } else {
+                queryResultsSection.style.display = 'none';
+                document.getElementById('queryResultsContainer').innerHTML = '<p>No results found.</p>';
+            }
+
+            addToHistory(query);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            collapsibleHeader.classList.remove('loading');
+            collapsibleHeader.textContent = 'Error generating SQL query';
+            sqlQueryCode.textContent = ''; // Clear any previous SQL query
+            sqlQueryCode.parentElement.style.display = 'none'; // Keep SQL query hidden on error
+        });
+    }
+
+    function displayResults() {
+        const queryResultsContainer = document.getElementById('queryResultsContainer');
+        const startIndex = (currentPage - 1) * resultsPerPage;
+        const endIndex = startIndex + resultsPerPage;
+        const pageResults = allResults.slice(startIndex, endIndex);
+
+        const table = createResultsTable(pageResults);
+
+        queryResultsContainer.innerHTML = '';
+        queryResultsContainer.appendChild(table);
+
+        updatePaginationControls();
+    }
+
+    function createResultsTable(results) {
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        
+        Object.keys(results[0]).forEach(key => {
+            const th = document.createElement('th');
+            th.textContent = key;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        results.forEach(row => {
+            const tr = document.createElement('tr');
+            Object.values(row).forEach(value => {
+                const td = document.createElement('td');
+                td.textContent = value;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+
+        return table;
+    }
+
+    function updatePaginationControls() {
+        const totalPages = Math.ceil(allResults.length / resultsPerPage);
+        const pageInfo = document.getElementById('pageInfo');
+        const prevButton = document.getElementById('prevPage');
+        const nextButton = document.getElementById('nextPage');
+
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        prevButton.disabled = currentPage === 1;
+        nextButton.disabled = currentPage === totalPages;
+    }
+
+    function changePage(direction) {
+        currentPage += direction;
+        displayResults();
+    }
+
+    function exportResults(format) {
+        fetch(`/export-query-results`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ data: allResults, format: format })
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = format === 'csv' ? 'query_results.csv' : 'query_results.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    function addToHistory(query) {
+        queryHistory.unshift(query);
+        if (queryHistory.length > 10) {
+            queryHistory.pop();
+        }
+        updateHistoryDisplay();
+
+        fetch('/save-query-history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ history: queryHistory })
+        });
+    }
+
+    function updateHistoryDisplay() {
+        const historyList = document.getElementById('historyList');
+        historyList.innerHTML = '';
+        queryHistory.forEach((query, index) => {
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.textContent = `${index + 1}. ${query.substring(0, 60)}${query.length > 60 ? '...' : ''}`;
+            item.onclick = () => {
+                document.getElementById('queryInput').value = query;
+            };
+            historyList.appendChild(item);
+        });
+    }
+
+    function clearHistory() {
+        queryHistory = [];
+        updateHistoryDisplay();
+        
+        fetch('/clear-query-history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
+    document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+
+    fetch('/get-query-history')
+        .then(response => response.json())
+        .then(data => {
+            queryHistory = data.history;
+            updateHistoryDisplay();
         });
 
-        function submitQuery(query) {
-            fetch(`/submit-query`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ query: query })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const queryDetailsDiv = document.getElementById('queryDetails');
-                const sqlQueryCode = document.getElementById('sqlQueryCode');
-                const queryResultsContainer = document.getElementById('queryResultsContainer');
-                
-                // Display the SQL query
-                sqlQueryCode.textContent = data.sql_query;
-                queryDetailsDiv.style.display = 'block';
-                
-                if (data.results && data.results.length > 0) {
-                    queryResultsContainer.innerHTML = `
-                        <div class="results-header">
-                            <h3>Query Results</h3>
-                            <div>
-                                <button type="button" onclick="exportResults('csv')" class="export-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="7 10 12 15 17 10"></polyline>
-                                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                                    </svg>
-                                    CSV
-                                </button>
-                                <button type="button" onclick="exportResults('excel')" class="export-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="7 10 12 15 17 10"></polyline>
-                                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                                    </svg>
-                                    Excel
-                                </button>
-                            </div>
-                        </div>
-                    `;
+    const queryTemplates = [
+        { name: "Total Sales by Product", query: "What is the total sales amount for each product?" },
+        { name: "Top 5 Customers", query: "Who are the top 5 customers by total purchase amount?" },
+        { name: "Monthly Sales Trend", query: "Show the total sales amount for each month" },
+        { name: "Employee Performance", query: "Which employees have the highest total sales?" },
+        { name: "Popular Payment Methods", query: "What are the most commonly used payment methods?" }
+    ];
 
-                    const overflowContainer = document.createElement('div');
-                    overflowContainer.className = 'overflow-container';
+    function populateQueryTemplates() {
+        const templateList = document.getElementById('templateList');
+        templateList.innerHTML = '';
+        queryTemplates.forEach(template => {
+            const item = document.createElement('div');
+            item.className = 'template-item';
+            item.textContent = template.name;
+            item.onclick = () => {
+                document.getElementById('queryInput').value = template.query;
+            };
+            templateList.appendChild(item);
+        });
+    }
 
-                    const table = document.createElement('table');
-                    const thead = document.createElement('thead');
-                    const headerRow = document.createElement('tr');
-                    Object.keys(data.results[0]).forEach(key => {
-                        const th = document.createElement('th');
-                        th.textContent = key;
-                        headerRow.appendChild(th);
-                    });
-                    thead.appendChild(headerRow);
-                    table.appendChild(thead);
-
-                    const tbody = document.createElement('tbody');
-                    data.results.forEach(row => {
-                        const tr = document.createElement('tr');
-                        Object.values(row).forEach(value => {
-                            const td = document.createElement('td');
-                            td.textContent = value;
-                            tr.appendChild(td);
-                        });
-                        tbody.appendChild(tr);
-                    });
-                    table.appendChild(tbody);
-
-                    overflowContainer.appendChild(table);
-                    queryResultsContainer.appendChild(overflowContainer);
-                } else {
-                    queryResultsContainer.innerHTML = '<p>No results found.</p>';
-                }
-
-                addToHistory(query);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        function exportResults(format) {
-            const queryResults = Array.from(document.querySelectorAll('#queryResultsContainer table tr')).map(row => {
-                return Array.from(row.cells).reduce((acc, cell, index) => {
-                    acc[document.querySelector('#queryResultsContainer table thead th:nth-child(' + (index + 1) + ')').textContent] = cell.textContent;
-                    return acc;
-                }, {});
-            }).slice(1);
-            
-            fetch(`/export-query-results`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ data: queryResults, format: format })
-            })
-            .then(response => response.blob())
-            .then(blob => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = format === 'csv' ? 'query_results.csv' : 'query_results.xlsx';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        function addToHistory(query) {
-            queryHistory.unshift(query);
-            if (queryHistory.length > 10) {
-                queryHistory.pop();
-            }
-            updateHistoryDisplay();
-
-            fetch('/save-query-history', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ history: queryHistory })
-            });
-        }
-
-        function updateHistoryDisplay() {
-            const historyList = document.getElementById('historyList');
-            historyList.innerHTML = '';
-            queryHistory.forEach((query, index) => {
-                const item = document.createElement('div');
-                item.className = 'history-item';
-                item.textContent = `${index + 1}. ${query.substring(0, 60)}${query.length > 60 ? '...' : ''}`;
-                item.onclick = () => {
-                    document.getElementById('queryInput').value = query;
-                };
-                historyList.appendChild(item);
-            });
-        }
-
-        function clearHistory() {
-            queryHistory = [];
-            updateHistoryDisplay();
-            
-        fetch('/clear-query-history', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-        }
-
-        document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
-
-        fetch('/get-query-history')
-            .then(response => response.json())
-            .then(data => {
-                queryHistory = data.history;
-                updateHistoryDisplay();
-            });
-
-        const queryTemplates = [
-            { name: "Total Sales by Product", query: "What is the total sales amount for each product?" },
-            { name: "Top 5 Customers", query: "Who are the top 5 customers by total purchase amount?" },
-            { name: "Monthly Sales Trend", query: "Show the total sales amount for each month" },
-            { name: "Employee Performance", query: "Which employees have the highest total sales?" },
-            { name: "Popular Payment Methods", query: "What are the most commonly used payment methods?" }
-        ];
-
-        function populateQueryTemplates() {
-            const templateList = document.getElementById('templateList');
-            templateList.innerHTML = '';
-            queryTemplates.forEach(template => {
-                const item = document.createElement('div');
-                item.className = 'template-item';
-                item.textContent = template.name;
-                item.onclick = () => {
-                    document.getElementById('queryInput').value = template.query;
-                };
-                templateList.appendChild(item);
-            });
-        }
-
-        populateQueryTemplates();
-
-    </script>
+    populateQueryTemplates();
+</script>
 </body>
 </html>
