@@ -1,111 +1,124 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Reporting System - Explore Data</title>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-styles.css') }}">
-    <style>
-        .create-tables-btn {
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin-top: 0px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sales Reporting System - Explore Data</title>
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-styles.css') }}">
+        <style>
+            .create-tables-btn {
+                background-color: #5cb85c;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                margin-top: 0px;
+                cursor: pointer;
+                border-radius: 5px;
+                font-size: 16px;
+                transition: background-color 0.3s ease;
+            }
 
-        .form-group {
-            display: flex;
-            justify-content: start;
-            align-items: center;
-            gap: 10px;
-        }
+            .form-group {
+                display: flex;
+                justify-content: start;
+                align-items: center;
+                gap: 10px;
+            }
 
-        .form-control {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            height: 20px; /* Match the height of the button */
-        }
+            .form-control {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+                height: 20px; /* Match the height of the button */
+            }
 
-        .overflow-container {
-            overflow-x: auto;
+            .overflow-container {
+                overflow-x: auto;
+                margin-top: 20px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th, td {
+                border: 1px solid #ddd;
+                text-align: left;
+                padding: 8px;
+            }
+
+            th {
+                background-color: #f2f2f2;
+            }
+
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            table, th, td {
+                font-size: 0.9em;
+            }
+            
+            #exportOptions {
             margin-top: 20px;
-        }
+            }
+            
+            #exportOptions button {
+            margin-right: 10px;
+            }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        table, th, td {
-            font-size: 0.9em;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Sales Reporting System</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="/">Files</a></li>
-            <li><a href="/tables">Tables</a></li>
-            <li><a href="/stored_procedures">Stored Procedures</a></li>
-            <li><a href="/table_data">Table Data</a></li>
-            <li><a href="/visualizations">Visualizations</a></li>
-            <li><a href="/explore_data">Explore Data</a></li>
-        </ul>
-    </nav>
-    <div class="container">
-        <h2>Explore Data</h2>
-        <div class="section">
-            <div class="section-header">Natural Language Query</div>
-            <p>Enter your query below to explore the data.</p>
-            <br>
-            <div class="form-group">
-                <input type="text" id="queryInput" class="form-control" placeholder="Enter your query here...">
-                <button type="button" id="submitQueryBtn" class="create-tables-btn">Submit</button>
-            </div>
-            <br>
-            <div id="queryDetails">
-                <!-- SQL query and results will be displayed here -->
-            </div>
-            <div id="queryResults">
-                <!-- Query results will be displayed here -->
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Sales Reporting System</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="/">Files</a></li>
+                <li><a href="/tables">Tables</a></li>
+                <li><a href="/stored_procedures">Stored Procedures</a></li>
+                <li><a href="/table_data">Table Data</a></li>
+                <li><a href="/visualizations">Visualizations</a></li>
+                <li><a href="/explore_data">QuickQueryAI</a></li>
+            </ul>
+        </nav>
+        <div class="container">
+            <h2>QuickQueryAI</h2>
+            <div class="section">
+                <div class="section-header">Natural Language Query</div>
+                <p>Enter your query below to explore the data.</p>
+                <br>
+                <div class="form-group">
+                    <input type="text" id="queryInput" class="form-control" placeholder="Enter your query here...">
+                    <button type="button" id="submitQueryBtn" class="create-tables-btn">Submit</button>
+                </div>
+                <br>
+                <div id="queryDetails">
+                    <!-- SQL query and results will be displayed here -->
+                </div>
+                <div id="queryResults">
+                    <!-- Query results will be displayed here -->
+                </div>
+                <div id="exportOptions" style="display: none;">
+                <button type="button" onclick="exportResults('csv')">Export as CSV</button>
+                <button type="button" onclick="exportResults('excel')">Export as Excel</button>
+                </div>
             </div>
         </div>
-    </div>
-    <script>
-        document.getElementById('submitQueryBtn').addEventListener('click', function() {
-            const query = document.getElementById('queryInput').value;
-            if (query) {
-                submitQuery(query);
-            } else {
-                alert('Please enter a query first.');
-            }
-        });
+        <script>
+            document.getElementById('submitQueryBtn').addEventListener('click', function() {
+                const query = document.getElementById('queryInput').value;
+                if (query) {
+                    submitQuery(query);
+                } else {
+                    alert('Please enter a query first.');
+                }
+            });
 
         function submitQuery(query) {
             fetch(`/submit-query`, {
@@ -119,6 +132,8 @@
             .then(data => {
                 const queryDetailsDiv = document.getElementById('queryDetails');
                 const queryResultsDiv = document.getElementById('queryResults');
+                const exportOptionsDiv = document.getElementById('exportOptions');
+                
                 queryDetailsDiv.innerHTML = `<h3>SQL Query</h3><pre>${data.sql_query}</pre>`;
                 queryResultsDiv.innerHTML = `<br><h3>Query Results</h3>`;
                 
@@ -151,14 +166,51 @@
 
                     overflowContainer.appendChild(table);
                     queryResultsDiv.appendChild(overflowContainer);
+                    
+                    // Show export options
+                    exportOptionsDiv.style.display = 'block';
                 } else {
                     queryResultsDiv.innerHTML += '<p>No results found.</p>';
+                    // Hide export options if no results
+                    exportOptionsDiv.style.display = 'none';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
             });
         }
-    </script>
-</body>
-</html>
+
+        function exportResults(format) {
+            const queryResults = Array.from(document.querySelectorAll('#queryResults table tr')).map(row => {
+                return Array.from(row.cells).reduce((acc, cell, index) => {
+                    acc[document.querySelector('#queryResults table thead th:nth-child(' + (index + 1) + ')').textContent] = cell.textContent;
+                    return acc;
+                }, {});
+            }).slice(1); // Remove header row
+            
+            fetch(`/export-query-results`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: queryResults, format: format })
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = format === 'csv' ? 'query_results.csv' : 'query_results.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        </script>
+    </body>
+    </html>

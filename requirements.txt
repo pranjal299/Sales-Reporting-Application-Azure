@@ -7,3 +7,4 @@ azure-mgmt-datafactory
 pytz
 pandas
 together
+xlsxwriter

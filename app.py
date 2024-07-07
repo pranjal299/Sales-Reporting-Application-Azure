@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, send_file
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential 
 from azure.mgmt.resource import ResourceManagementClient
@@ -11,6 +11,8 @@ import pytz
 import pyodbc
 import requests
 from together import Together
+import pandas as pd
+from io import BytesIO
 
 app = Flask(__name__, static_url_path='', static_folder='static')
 
@@ -291,6 +293,27 @@ def submit_query():
     except Exception as e:
         print(str(e))
         return jsonify(results=[], sql_query=sql_query, error=str(e))
+
+@app.route('/export-query-results', methods=['POST'])
+def export_query_results():
+    data = request.json.get('data')
+    export_format = request.json.get('format', 'csv')  # default to CSV
+    
+    df = pd.DataFrame(data)
+    
+    if export_format == 'csv':
+        output = BytesIO()
+        df.to_csv(output, index=False)
+        output.seek(0)
+        return send_file(output, mimetype='text/csv', as_attachment=True, download_name='query_results.csv')
+    elif export_format == 'excel':
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Sheet1')
+        output.seek(0)
+        return send_file(output, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', as_attachment=True, download_name='query_results.xlsx')
+    else:
+        return jsonify({'error': 'Unsupported format'}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
