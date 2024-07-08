@@ -194,6 +194,29 @@
             display: none;
         }
 
+        #historyList {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+#historyList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#historyList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#historyList::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#historyList::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 .pagination {
     display: flex;
     justify-content: center;
@@ -318,6 +341,7 @@
         overflow-y: auto;
         display: none;
     }
+
 
     </style>
 </head>
@@ -587,9 +611,9 @@
 
     function addToHistory(query) {
         queryHistory.unshift(query);
-        if (queryHistory.length > 10) {
-            queryHistory.pop();
-        }
+        //if (queryHistory.length > 10) {
+        //    queryHistory.pop();
+        //}
         updateHistoryDisplay();
 
         fetch('/save-query-history', {
