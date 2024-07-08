@@ -342,6 +342,11 @@
         display: none;
     }
 
+        #remainingQueries {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
 
     </style>
 </head>
@@ -367,6 +372,7 @@
         Enter your question about the sales data in the input field below, or choose one of the query templates as an example. 
         Our AI will convert your natural language query into SQL and fetch the results for you.
     </p>
+    <div id="remainingQueries"></div>
     <div id="queryTemplates">
         <h3>Query Templates</h3>
         <div id="templateList"></div>
@@ -434,6 +440,15 @@
         </div>
     </div>
     <script>
+
+        function updateRemainingQueries() {
+        fetch('/get-remaining-queries')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('remainingQueries').textContent = `Remaining queries today: ${data.remaining}`;
+            });
+    }
+
     let queryHistory = [];
     let currentPage = 1;
     const resultsPerPage = 10;
@@ -471,10 +486,26 @@
         }
     });
 
-    function submitQuery(query) {
+     function submitQuery(query) {
         const queryDetailsDiv = document.getElementById('queryDetails');
         const collapsibleHeader = queryDetailsDiv.querySelector('.collapsible-header');
+        const sqlQueryCode = document.getElementById('sqlQueryCode');
         
+        // Check remaining queries first
+        const remainingQueries = parseInt(document.getElementById('remainingQueries').textContent.split(': ')[1]);
+    
+        if (remainingQueries <= 0) {
+        // Immediately show the error
+        queryDetailsDiv.style.display = 'block';
+        collapsibleHeader.classList.remove('loading');
+        collapsibleHeader.innerHTML = 'Error';
+        collapsibleHeader.style.cursor = 'pointer';
+        sqlQueryCode.textContent = 'Error: Daily query limit reached. Please try again tomorrow.';
+        sqlQueryCode.parentElement.style.display = 'block';
+        return; // Exit the function early
+    }
+
+
         // Show loading state
         queryDetailsDiv.style.display = 'block';
         collapsibleHeader.classList.add('loading');
@@ -483,7 +514,6 @@
         sqlQueryCode.textContent = ''; // Clear any previous SQL query
         sqlQueryCode.parentElement.style.display = 'none'; // Hide the SQL query display area
 
-        
         fetch(`/submit-query`, {
             method: 'POST',
             headers: {
@@ -491,20 +521,27 @@
             },
             body: JSON.stringify({ query: query })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 429) {
+                    throw new Error('Daily query limit reached. Please try again tomorrow.');
+                }
+                throw new Error('An error occurred while processing your query.');
+            }
+            return response.json();
+        })
         .then(data => {
-            const sqlQueryCode = document.getElementById('sqlQueryCode');
             const queryResultsSection = document.getElementById('queryResultsSection');
             
             // Display the SQL query
             sqlQueryCode.textContent = data.sql_query;
 
             // Reset the collapsible header state
-        collapsibleHeader.classList.remove('loading');
-        collapsibleHeader.innerHTML = 'Show SQL Query Generated';
-        collapsibleHeader.style.cursor = 'pointer';
-        collapsibleHeader.classList.remove('active');
-        sqlQueryCode.parentElement.style.display = 'none';
+            collapsibleHeader.classList.remove('loading');
+            collapsibleHeader.innerHTML = 'Show SQL Query Generated';
+            collapsibleHeader.style.cursor = 'pointer';
+            collapsibleHeader.classList.remove('active');
+            sqlQueryCode.parentElement.style.display = 'none';
 
             if (data.results && data.results.length > 0) {
                 allResults = data.results;
@@ -517,15 +554,32 @@
             }
 
             addToHistory(query);
+            updateRemainingQueries();
         })
         .catch(error => {
             console.error('Error:', error);
+            
+            // Update the query details div to show the error
             collapsibleHeader.classList.remove('loading');
-            collapsibleHeader.textContent = 'Error generating SQL query';
-            sqlQueryCode.textContent = ''; // Clear any previous SQL query
-            sqlQueryCode.parentElement.style.display = 'none'; // Keep SQL query hidden on error
+            collapsibleHeader.innerHTML = 'Error';
+            collapsibleHeader.style.cursor = 'pointer';
+            
+            // Display the error message in the SQL query code area
+            sqlQueryCode.textContent = 'Error: ' + error.message;
+            sqlQueryCode.parentElement.style.display = 'block';
+            
+            // Hide the query results section
+            document.getElementById('queryResultsSection').style.display = 'none';
+            
+            // Show an alert with the error message
+            alert(error.message);
+            
+            updateRemainingQueries();
         });
     }
+    
+
+        updateRemainingQueries();
 
     function displayResults() {
         const queryResultsContainer = document.getElementById('queryResultsContainer');

@@ -55,6 +55,18 @@ blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING
 API_KEY = '8e8e05d2ba164b2a477e7b6874f2bbf7c49d1f93450b1fb352625b0587e479ca'
 client = Together(api_key=API_KEY)
 
+def check_query_limit():
+    today = datetime.now().date().isoformat()
+    if 'query_count' not in session or session.get('last_query_date') != today:
+        session['query_count'] = 0
+        session['last_query_date'] = today
+    
+    if session['query_count'] >= 10:
+        return False
+    
+    session['query_count'] += 1
+    return True
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -268,6 +280,9 @@ def explore_data():
 
 @app.route('/submit-query', methods=['POST'])
 def submit_query():
+    if not check_query_limit():
+        return jsonify(error="Daily query limit reached. Please try again tomorrow."), 429
+
     query = request.json.get('query')
     
     # Get the SQL query from the Together API
@@ -296,6 +311,15 @@ def submit_query():
     except Exception as e:
         print(str(e))
         return jsonify(results=[], sql_query=sql_query, error=str(e))
+
+@app.route('/get-remaining-queries')
+def get_remaining_queries():
+    today = datetime.now().date().isoformat()
+    if 'query_count' not in session or session.get('last_query_date') != today:
+        remaining = 10
+    else:
+        remaining = max(0, 10 - session['query_count'])
+    return jsonify(remaining=remaining)
 
 @app.route('/export-query-results', methods=['POST'])
 def export_query_results():
