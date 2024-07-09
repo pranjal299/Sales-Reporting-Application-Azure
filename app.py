@@ -22,19 +22,6 @@ app = Flask(__name__, static_url_path='', static_folder='static')
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
-# Set up logging
-log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
-os.makedirs(log_dir, exist_ok=True)
-log_file = os.path.join(log_dir, 'app.log')
-
-handler = RotatingFileHandler(log_file, maxBytes=10000, backupCount=1)
-handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-
-app.logger.addHandler(handler)
-app.logger.setLevel(logging.DEBUG)
-
 # Azure Storage Account settings
 CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=salesreportingstacc;AccountKey=97+RZ/EBfDX+99pjcSX7i8j/bf50mzl+MyiGUyymQTO3jt2fVMh2Zg8XtQQxbOfcIuf5fsptr/Ei+AStYPe3WQ==;EndpointSuffix=core.windows.net"
 
@@ -81,16 +68,11 @@ def get_client_ip():
     
     # Remove the port if it's present
     ip = ip.split(':')[0]
-    
-    app.logger.debug(f"Client IP (without port): {ip}")
-    app.logger.debug(f"Request headers: {request.headers}")
     return ip
 
 def get_or_create_ip_record(cursor, ip_address):
     today = date.today()
-    
-    app.logger.debug(f"Checking record for IP: {ip_address}")
-    
+        
     # Try to get the existing record
     cursor.execute("""
         SELECT query_count, last_query_date
@@ -102,9 +84,7 @@ def get_or_create_ip_record(cursor, ip_address):
     
     if record:
         query_count, last_query_date = record
-        app.logger.debug(f"Existing record found - Count: {query_count}, Last Date: {last_query_date}")
         if last_query_date != today:
-            app.logger.debug("Resetting count for new day")
             cursor.execute("""
                 UPDATE IPQueryTracking
                 SET query_count = 0, last_query_date = ?
@@ -113,7 +93,6 @@ def get_or_create_ip_record(cursor, ip_address):
             return 0
         return query_count
     else:
-        app.logger.debug("Creating new record")
         cursor.execute("""
             INSERT INTO IPQueryTracking (ip_address, query_count, last_query_date)
             VALUES (?, 0, ?)
@@ -122,18 +101,14 @@ def get_or_create_ip_record(cursor, ip_address):
 
 def check_query_limit():
     ip_address = get_client_ip()
-    app.logger.debug(f"Checking query limit for IP: {ip_address}")
     
     conn = pyodbc.connect(DB_CONNECTION_STRING)
     cursor = conn.cursor()
     
     try:
         query_count = get_or_create_ip_record(cursor, ip_address)
-        
-        app.logger.debug(f"Current query count: {query_count}")
-        
+                
         if query_count >= 10:
-            app.logger.debug("Query limit reached")
             return False
         
         # Increment the query count
@@ -144,10 +119,8 @@ def check_query_limit():
         """, ip_address)
         
         conn.commit()
-        app.logger.debug("Query count incremented")
         return True
     except Exception as e:
-        app.logger.error(f"Error in check_query_limit: {str(e)}")
         return False
     finally:
         cursor.close()
@@ -402,7 +375,6 @@ def submit_query():
 @app.route('/get-remaining-queries')
 def get_remaining_queries():
     ip_address = get_client_ip()
-    app.logger.debug(f"Getting remaining queries for IP: {ip_address}")
     
     conn = pyodbc.connect(DB_CONNECTION_STRING)
     cursor = conn.cursor()
@@ -410,10 +382,8 @@ def get_remaining_queries():
     try:
         query_count = get_or_create_ip_record(cursor, ip_address)
         remaining = max(0, 10 - query_count)
-        app.logger.debug(f"Remaining queries: {remaining}")
         return jsonify(remaining=remaining)
     except Exception as e:
-        app.logger.error(f"Error in get_remaining_queries: {str(e)}")
         return jsonify(error="An error occurred"), 500
     finally:
         cursor.close()

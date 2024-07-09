@@ -1,0 +1,145 @@
+2024-07-08 23:11:24,740 - app - DEBUG - Client IP (without port): 127.0.0.1
+2024-07-08 23:11:24,759 - app - DEBUG - Request headers: Host: 127.0.0.1:5000
+Connection: keep-alive
+Sec-Ch-Ua: "Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+Sec-Ch-Ua-Platform: "Windows"
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://127.0.0.1:5000/explore_data
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-US,en;q=0.9
+Cookie: username-127-0-0-1-8888=2|1:0|10:1718829145|23:username-127-0-0-1-8888|196:eyJ1c2VybmFtZSI6ICJiNzRjNjVjZTE5ZTQ0MzNhOTVmNWE2NTdjNDY3YzI1MCIsICJuYW1lIjogIkFub255bW91cyBFdXBoZW1lIiwgImRpc3BsYXlfbmFtZSI6ICJBbm9ueW1vdXMgRXVwaGVtZSIsICJpbml0aWFscyI6ICJBRSIsICJjb2xvciI6IG51bGx9|d8f39ef569a3e114d73606a14aa66ec79b5594c2687566c001fdab070f3d427f; _xsrf=2|eec68f9f|d04cd65c18addcd8d631a7b9696990d4|1718829145; session=O1dhU5ZVYtJpDT6yKkrTcN_KHx6ENp6EoyRpdDzIpAs; pdfcc=1
+
+
+2024-07-08 23:11:24,770 - app - DEBUG - Getting remaining queries for IP: 127.0.0.1
+2024-07-08 23:11:25,487 - app - DEBUG - Checking record for IP: 127.0.0.1
+2024-07-08 23:11:25,549 - app - DEBUG - Creating new record
+2024-07-08 23:11:25,598 - app - DEBUG - Remaining queries: 10
+2024-07-08 23:11:28,466 - app - DEBUG - Client IP (without port): 127.0.0.1
+2024-07-08 23:11:28,467 - app - DEBUG - Request headers: Host: 127.0.0.1:5000
+Connection: keep-alive
+Content-Length: 65
+Sec-Ch-Ua: "Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"
+Sec-Ch-Ua-Platform: "Windows"
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+Content-Type: application/json
+Accept: */*
+Origin: http://127.0.0.1:5000
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://127.0.0.1:5000/explore_data
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-US,en;q=0.9
+Cookie: username-127-0-0-1-8888=2|1:0|10:1718829145|23:username-127-0-0-1-8888|196:eyJ1c2VybmFtZSI6ICJiNzRjNjVjZTE5ZTQ0MzNhOTVmNWE2NTdjNDY3YzI1MCIsICJuYW1lIjogIkFub255bW91cyBFdXBoZW1lIiwgImRpc3BsYXlfbmFtZSI6ICJBbm9ueW1vdXMgRXVwaGVtZSIsICJpbml0aWFscyI6ICJBRSIsICJjb2xvciI6IG51bGx9|d8f39ef569a3e114d73606a14aa66ec79b5594c2687566c001fdab070f3d427f; _xsrf=2|eec68f9f|d04cd65c18addcd8d631a7b9696990d4|1718829145; session=O1dhU5ZVYtJpDT6yKkrTcN_KHx6ENp6EoyRpdDzIpAs; pdfcc=2
+
+
+2024-07-08 23:11:28,477 - app - DEBUG - Checking query limit for IP: 127.0.0.1
+2024-07-08 23:11:28,510 - app - DEBUG - Checking record for IP: 127.0.0.1
+2024-07-08 23:11:28,557 - app - DEBUG - Creating new record
+2024-07-08 23:11:28,606 - app - DEBUG - Current query count: 0
+2024-07-08 23:11:28,689 - app - DEBUG - Query count incremented
+2024-07-08 23:11:31,685 - app - DEBUG - Client IP (without port): 127.0.0.1
+2024-07-08 23:11:31,692 - app - DEBUG - Request headers: Host: 127.0.0.1:5000
+Connection: keep-alive
+Sec-Ch-Ua: "Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+Sec-Ch-Ua-Platform: "Windows"
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://127.0.0.1:5000/explore_data
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-US,en;q=0.9
+Cookie: username-127-0-0-1-8888=2|1:0|10:1718829145|23:username-127-0-0-1-8888|196:eyJ1c2VybmFtZSI6ICJiNzRjNjVjZTE5ZTQ0MzNhOTVmNWE2NTdjNDY3YzI1MCIsICJuYW1lIjogIkFub255bW91cyBFdXBoZW1lIiwgImRpc3BsYXlfbmFtZSI6ICJBbm9ueW1vdXMgRXVwaGVtZSIsICJpbml0aWFscyI6ICJBRSIsICJjb2xvciI6IG51bGx9|d8f39ef569a3e114d73606a14aa66ec79b5594c2687566c001fdab070f3d427f; _xsrf=2|eec68f9f|d04cd65c18addcd8d631a7b9696990d4|1718829145; session=O1dhU5ZVYtJpDT6yKkrTcN_KHx6ENp6EoyRpdDzIpAs; pdfcc=2
+
+
+2024-07-08 23:11:31,692 - app - DEBUG - Getting remaining queries for IP: 127.0.0.1
+2024-07-08 23:11:31,750 - app - DEBUG - Checking record for IP: 127.0.0.1
+2024-07-08 23:11:31,809 - app - DEBUG - Existing record found - Count: 1, Last Date: 2024-07-08
+2024-07-08 23:11:31,825 - app - DEBUG - Remaining queries: 9
+2024-07-08 23:11:36,607 - app - DEBUG - Client IP (without port): 127.0.0.1
+2024-07-08 23:11:36,607 - app - DEBUG - Request headers: Host: 127.0.0.1:5000
+Connection: keep-alive
+Content-Length: 54
+Sec-Ch-Ua: "Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"
+Sec-Ch-Ua-Platform: "Windows"
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+Content-Type: application/json
+Accept: */*
+Origin: http://127.0.0.1:5000
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://127.0.0.1:5000/explore_data
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-US,en;q=0.9
+Cookie: username-127-0-0-1-8888=2|1:0|10:1718829145|23:username-127-0-0-1-8888|196:eyJ1c2VybmFtZSI6ICJiNzRjNjVjZTE5ZTQ0MzNhOTVmNWE2NTdjNDY3YzI1MCIsICJuYW1lIjogIkFub255bW91cyBFdXBoZW1lIiwgImRpc3BsYXlfbmFtZSI6ICJBbm9ueW1vdXMgRXVwaGVtZSIsICJpbml0aWFscyI6ICJBRSIsICJjb2xvciI6IG51bGx9|d8f39ef569a3e114d73606a14aa66ec79b5594c2687566c001fdab070f3d427f; _xsrf=2|eec68f9f|d04cd65c18addcd8d631a7b9696990d4|1718829145; session=O1dhU5ZVYtJpDT6yKkrTcN_KHx6ENp6EoyRpdDzIpAs; pdfcc=2
+
+
+2024-07-08 23:11:36,611 - app - DEBUG - Checking query limit for IP: 127.0.0.1
+2024-07-08 23:11:36,680 - app - DEBUG - Checking record for IP: 127.0.0.1
+2024-07-08 23:11:36,755 - app - DEBUG - Existing record found - Count: 1, Last Date: 2024-07-08
+2024-07-08 23:11:36,757 - app - DEBUG - Current query count: 1
+2024-07-08 23:11:36,834 - app - DEBUG - Query count incremented
+2024-07-08 23:11:39,753 - app - DEBUG - Client IP (without port): 127.0.0.1
+2024-07-08 23:11:39,757 - app - DEBUG - Request headers: Host: 127.0.0.1:5000
+Connection: keep-alive
+Sec-Ch-Ua: "Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+Sec-Ch-Ua-Platform: "Windows"
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://127.0.0.1:5000/explore_data
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-US,en;q=0.9
+Cookie: username-127-0-0-1-8888=2|1:0|10:1718829145|23:username-127-0-0-1-8888|196:eyJ1c2VybmFtZSI6ICJiNzRjNjVjZTE5ZTQ0MzNhOTVmNWE2NTdjNDY3YzI1MCIsICJuYW1lIjogIkFub255bW91cyBFdXBoZW1lIiwgImRpc3BsYXlfbmFtZSI6ICJBbm9ueW1vdXMgRXVwaGVtZSIsICJpbml0aWFscyI6ICJBRSIsICJjb2xvciI6IG51bGx9|d8f39ef569a3e114d73606a14aa66ec79b5594c2687566c001fdab070f3d427f; _xsrf=2|eec68f9f|d04cd65c18addcd8d631a7b9696990d4|1718829145; session=O1dhU5ZVYtJpDT6yKkrTcN_KHx6ENp6EoyRpdDzIpAs; pdfcc=2
+
+
+2024-07-08 23:11:39,759 - app - DEBUG - Getting remaining queries for IP: 127.0.0.1
+2024-07-08 23:11:39,794 - app - DEBUG - Checking record for IP: 127.0.0.1
+2024-07-08 23:11:39,840 - app - DEBUG - Existing record found - Count: 2, Last Date: 2024-07-08
+2024-07-08 23:11:39,840 - app - DEBUG - Remaining queries: 8
+2024-07-08 23:13:01,258 - app - DEBUG - Client IP (without port): 127.0.0.1
+2024-07-08 23:13:01,260 - app - DEBUG - Request headers: Host: 127.0.0.1:5000
+Connection: keep-alive
+Sec-Ch-Ua: "Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+Sec-Ch-Ua-Platform: "Windows"
+Accept: */*
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: http://127.0.0.1:5000/explore_data
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-US,en;q=0.9
+Cookie: username-127-0-0-1-8888=2|1:0|10:1718829145|23:username-127-0-0-1-8888|196:eyJ1c2VybmFtZSI6ICJiNzRjNjVjZTE5ZTQ0MzNhOTVmNWE2NTdjNDY3YzI1MCIsICJuYW1lIjogIkFub255bW91cyBFdXBoZW1lIiwgImRpc3BsYXlfbmFtZSI6ICJBbm9ueW1vdXMgRXVwaGVtZSIsICJpbml0aWFscyI6ICJBRSIsICJjb2xvciI6IG51bGx9|d8f39ef569a3e114d73606a14aa66ec79b5594c2687566c001fdab070f3d427f; _xsrf=2|eec68f9f|d04cd65c18addcd8d631a7b9696990d4|1718829145; session=O1dhU5ZVYtJpDT6yKkrTcN_KHx6ENp6EoyRpdDzIpAs; pdfcc=2
+
+
+2024-07-08 23:13:01,260 - app - DEBUG - Getting remaining queries for IP: 127.0.0.1
+2024-07-08 23:13:01,635 - app - DEBUG - Checking record for IP: 127.0.0.1
+2024-07-08 23:13:01,677 - app - DEBUG - Existing record found - Count: 2, Last Date: 2024-07-08
+2024-07-08 23:13:01,680 - app - DEBUG - Remaining queries: 8
+2024-07-08 23:13:05,005 - app - DEBUG - Client IP (without port): 127.0.0.1
+2024-07-08 23:13:05,041 - app - DEBUG - Checking query limit for IP: 127.0.0.1
+2024-07-08 23:13:05,089 - app - DEBUG - Checking record for IP: 127.0.0.1
+2024-07-08 23:13:05,123 - app - DEBUG - Existing record found - Count: 2, Last Date: 2024-07-08
+2024-07-08 23:13:05,133 - app - DEBUG - Current query count: 2
+2024-07-08 23:13:05,221 - app - DEBUG - Query count incremented
+2024-07-08 23:13:08,591 - app - DEBUG - Client IP (without port): 127.0.0.1
+2024-07-08 23:13:08,607 - app - DEBUG - Getting remaining queries for IP: 127.0.0.1
+2024-07-08 23:13:09,185 - app - DEBUG - Checking record for IP: 127.0.0.1
+2024-07-08 23:13:09,246 - app - DEBUG - Existing record found - Count: 3, Last Date: 2024-07-08
+2024-07-08 23:13:09,246 - app - DEBUG - Remaining queries: 7
