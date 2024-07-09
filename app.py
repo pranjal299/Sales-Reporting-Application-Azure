@@ -79,7 +79,10 @@ def get_client_ip():
     else:
         ip = request.remote_addr
     
-    app.logger.debug(f"Client IP: {ip}")
+    # Remove the port if it's present
+    ip = ip.split(':')[0]
+    
+    app.logger.debug(f"Client IP (without port): {ip}")
     app.logger.debug(f"Request headers: {request.headers}")
     return ip
 
