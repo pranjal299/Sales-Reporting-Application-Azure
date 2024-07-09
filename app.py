@@ -15,6 +15,12 @@ import requests
 from together import Together
 import pandas as pd
 from io import BytesIO
+import logging
+from logging.handlers import RotatingFileHandler
+
+app = Flask(__name__, static_url_path='', static_folder='static')
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 
 # Set up logging
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -28,10 +34,6 @@ handler.setFormatter(formatter)
 
 app.logger.addHandler(handler)
 app.logger.setLevel(logging.DEBUG)
-
-app = Flask(__name__, static_url_path='', static_folder='static')
-app.config['SESSION_TYPE'] = 'filesystem'
-Session(app)
 
 # Azure Storage Account settings
 CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=salesreportingstacc;AccountKey=97+RZ/EBfDX+99pjcSX7i8j/bf50mzl+MyiGUyymQTO3jt2fVMh2Zg8XtQQxbOfcIuf5fsptr/Ei+AStYPe3WQ==;EndpointSuffix=core.windows.net"
