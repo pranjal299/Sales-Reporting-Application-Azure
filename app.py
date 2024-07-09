@@ -6,6 +6,7 @@ from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.datafactory import DataFactoryManagementClient
 from azure.mgmt.datafactory.models import *
 from datetime import datetime, timedelta
+from datetime import date
 import time
 import os
 import pytz
@@ -55,17 +56,61 @@ blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING
 API_KEY = '8e8e05d2ba164b2a477e7b6874f2bbf7c49d1f93450b1fb352625b0587e479ca'
 client = Together(api_key=API_KEY)
 
+def get_or_create_ip_record(cursor, ip_address):
+    today = date.today()
+    
+    # Try to get the existing record
+    cursor.execute("""
+        SELECT query_count, last_query_date
+        FROM IPQueryTracking
+        WHERE ip_address = ?
+    """, ip_address)
+    
+    record = cursor.fetchone()
+    
+    if record:
+        query_count, last_query_date = record
+        if last_query_date != today:
+            # Reset count for a new day
+            cursor.execute("""
+                UPDATE IPQueryTracking
+                SET query_count = 0, last_query_date = ?
+                WHERE ip_address = ?
+            """, today, ip_address)
+            return 0
+        return query_count
+    else:
+        # Create new record
+        cursor.execute("""
+            INSERT INTO IPQueryTracking (ip_address, query_count, last_query_date)
+            VALUES (?, 0, ?)
+        """, ip_address, today)
+        return 0
+
 def check_query_limit():
-    today = datetime.now().date().isoformat()
-    if 'query_count' not in session or session.get('last_query_date') != today:
-        session['query_count'] = 0
-        session['last_query_date'] = today
+    ip_address = request.remote_addr
+    conn = pyodbc.connect(DB_CONNECTION_STRING)
+    cursor = conn.cursor()
     
-    if session['query_count'] >= 10:
-        return False
-    
-    session['query_count'] += 1
-    return True
+    try:
+        query_count = get_or_create_ip_record(cursor, ip_address)
+        
+        if query_count >= 10:
+            return False
+        
+        # Increment the query count
+        cursor.execute("""
+            UPDATE IPQueryTracking
+            SET query_count = query_count + 1
+            WHERE ip_address = ?
+        """, ip_address)
+        
+        conn.commit()
+        return True
+    finally:
+        cursor.close()
+        conn.close()
+
 
 @app.route('/')
 def index():
@@ -314,12 +359,17 @@ def submit_query():
 
 @app.route('/get-remaining-queries')
 def get_remaining_queries():
-    today = datetime.now().date().isoformat()
-    if 'query_count' not in session or session.get('last_query_date') != today:
-        remaining = 10
-    else:
-        remaining = max(0, 10 - session['query_count'])
-    return jsonify(remaining=remaining)
+    ip_address = request.remote_addr
+    conn = pyodbc.connect(DB_CONNECTION_STRING)
+    cursor = conn.cursor()
+    
+    try:
+        query_count = get_or_create_ip_record(cursor, ip_address)
+        remaining = max(0, 10 - query_count)
+        return jsonify(remaining=remaining)
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route('/export-query-results', methods=['POST'])
 def export_query_results():
