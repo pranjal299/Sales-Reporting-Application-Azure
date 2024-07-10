@@ -427,5 +427,31 @@ def clear_query_history():
     session['query_history'] = []
     return jsonify({'status': 'success'})
 
+def suggest_chart_type(data):
+    if len(data) == 0:
+        return None
+    
+    columns = list(data[0].keys())
+    
+    if len(columns) == 2:
+        if isinstance(data[0][columns[1]], (int, float)):
+            return 'bar'
+        else:
+            return 'pie'
+    elif len(columns) > 2:
+        numeric_columns = sum(isinstance(data[0][col], (int, float)) for col in columns)
+        if numeric_columns >= 2:
+            return 'line'
+        else:
+            return 'bar'
+    
+    return None
+
+@app.route('/suggest-chart', methods=['POST'])
+def suggest_chart():
+    data = request.json.get('data', [])
+    chart_type = suggest_chart_type(data)
+    return jsonify({'chartType': chart_type})
+
 if __name__ == '__main__':
     app.run(debug=True)

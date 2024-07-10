@@ -6,6 +6,7 @@
     <title>Sales Reporting System - Explore Data</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .create-tables-btn {
             background-color: #5cb85c;
@@ -70,6 +71,11 @@
             margin-bottom: 10px;
         }
 
+        .export-buttons {
+    display: flex;
+    gap: 10px;
+}
+
         .export-btn {
             background-color: #f8f9fa;
             border: 1px solid #ced4da;
@@ -80,7 +86,6 @@
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            margin-left: 10px;
         }
 
         .export-btn:hover {
@@ -383,6 +388,65 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        #chartContainer {
+            height: 400px;
+            margin-top: 20px;
+        }
+
+        #chartControls {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+
+        #chartControls div {
+            margin-bottom: 10px;
+        }
+
+        #chartControls label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        #chartControls select, #chartControls input[type="text"] {
+            width: 200px;
+            padding: 5px;
+        }
+
+        #chartControls button {
+            margin-right: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        #chartControls button:hover {
+            background-color: #45a049;
+        }
+
+        #visualizationSection {
+            margin-top: 20px;
+        }
+
+        #chartControls * {
+            font-size: 0.9em;
+        }
+
+        #chartControls h4 {
+    margin-top: 0; /* Remove top margin */
+}
+
+        #chartContainer h4 {
+    margin-top: 0; /* Remove top margin */
+    margin-bottom: 0;
+}
+
     </style>
     <!-- Include Mermaid.js from CDN -->
     <script type="module">
@@ -435,26 +499,34 @@
         <!-- Query Results Section -->
         <div id="queryResultsSection" class="section" style="display: none;">
             <div class="results-header">
-                <div class="section-header">Results</div>
-                <div>
-                    <button type="button" onclick="exportResults('csv')" class="export-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        CSV
-                    </button>
-                    <button type="button" onclick="exportResults('excel')" class="export-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Excel
-                    </button>
-                </div>
-            </div>
+    <div class="section-header">Results</div>
+    <div class="export-buttons">
+        <button type="button" onclick="toggleVisualization()" class="export-btn" id="visualizeBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Visualization
+        </button>
+        <button type="button" onclick="exportResults('csv')" class="export-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            CSV
+        </button>
+        <button type="button" onclick="exportResults('excel')" class="export-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Excel
+        </button>
+    </div>
+</div>
             <div class="overflow-container">
                 <div id="queryResultsContainer">
                     <!-- Query results will be displayed here -->
@@ -464,6 +536,57 @@
                 <button id="prevPage" onclick="changePage(-1)">Previous</button>
                 <span id="pageInfo"></span>
                 <button id="nextPage" onclick="changePage(1)">Next</button>
+            </div>
+        </div>
+
+                <!-- Visualization Section -->
+        <div id="visualizationSection" class="section" style="display: none;">
+            <div class="section-header">Visualization</div>
+            <div id="chartControls">
+                <h4>Chart Controls</h4>
+                <div>
+                    <label for="chartType">Chart Type:</label>
+                    <select id="chartType">
+                        <option value="bar">Bar Chart</option>
+                        <option value="line">Line Chart</option>
+                        <option value="pie">Pie Chart</option>
+                        <option value="scatter">Scatter Plot</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="xAxis">X-Axis:</label>
+                    <select id="xAxis"></select>
+                </div>
+                <div>
+                    <label for="yAxis">Y-Axis:</label>
+                    <select id="yAxis"></select>
+                </div>
+                <div>
+                    <label for="colorScheme">Color Scheme:</label>
+                    <select id="colorScheme">
+                        <option value="default">Default</option>
+                        <option value="pastel">Pastel</option>
+                        <option value="bright">Bright</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="chartTitle">Chart Title:</label>
+                    <input type="text" id="chartTitle">
+                </div>
+                <div>
+                    <label for="xAxisLabel">X-Axis Label:</label>
+                    <input type="text" id="xAxisLabel">
+                </div>
+                <div>
+                    <label for="yAxisLabel">Y-Axis Label:</label>
+                    <input type="text" id="yAxisLabel">
+                </div>
+                <button id="updateChart">Update Chart</button>
+                <button id="exportChart">Export Chart</button>
+            </div>
+            <div id="chartContainer">
+                <canvas id="resultChart"></canvas>
             </div>
         </div>
 
@@ -537,6 +660,34 @@ erDiagram
     </div>
 
     <script>
+
+        function toggleVisualization() {
+            const visualizationSection = document.getElementById('visualizationSection');
+            if (visualizationSection.style.display === 'none') {
+                visualizationSection.style.display = 'block';
+                document.getElementById('visualizeBtn').textContent = 'Hide Visualization';
+            } else {
+                visualizationSection.style.display = 'none';
+                document.getElementById('visualizeBtn').textContent = 'Visualize';
+            }
+        }
+
+        const colorSchemes = {
+            default: ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab'],
+            pastel: ['#fd7f6f', '#7eb0d5', '#b2e061', '#bd7ebe', '#ffb55a', '#ffee65', '#beb9db', '#fdcce5', '#8bd3c7'],
+            bright: ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe'],
+            dark: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+        };
+
+        function getColors(colorScheme, count) {
+            const colors = colorSchemes[colorScheme] || colorSchemes.default;
+            return colors.slice(0, count);
+        }
+
+                // Add event listeners for the new controls
+        document.getElementById('updateChart').addEventListener('click', updateChart);
+        document.getElementById('exportChart').addEventListener('click', exportChart);
+
         // Initialize Mermaid
         document.addEventListener("DOMContentLoaded", function () {
             mermaid.initialize({ startOnLoad: false });
@@ -676,9 +827,15 @@ erDiagram
                     allResults = data.results;
                     currentPage = 1;
                     queryResultsSection.style.display = 'block';
+                    document.getElementById('visualizationSection').style.display = 'none';
+                    document.getElementById('visualizeBtn').textContent = 'Visualize';                    
                     displayResults();
+                    chartData = data.results;
+                    populateAxisSelects(chartData);
+                    suggestAndCreateChart(chartData);
                 } else {
                     queryResultsSection.style.display = 'none';
+                    document.getElementById('visualizationSection').style.display = 'none';
                     document.getElementById('queryResultsContainer').innerHTML = '<p>No results found.</p>';
                 }
 
@@ -866,6 +1023,136 @@ erDiagram
         }
 
         populateQueryTemplates();
+
+        let currentChart = null;
+
+        function suggestAndCreateChart(data) {
+            fetch('/suggest-chart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: data })
+            })
+            .then(response => response.json())
+            .then(suggestion => {
+                document.getElementById('chartType').value = suggestion.chartType;
+                updateChart();
+            });
+        }
+
+        let chartData = null;
+
+        function populateAxisSelects(data) {
+            const xAxisSelect = document.getElementById('xAxis');
+            const yAxisSelect = document.getElementById('yAxis');
+            const columns = Object.keys(data[0]);
+            
+            xAxisSelect.innerHTML = '';
+            yAxisSelect.innerHTML = '';
+            
+            columns.forEach(column => {
+                xAxisSelect.add(new Option(column, column));
+                yAxisSelect.add(new Option(column, column));
+            });
+            
+            // Default Y-axis to the second column if it exists
+            if (columns.length > 1) {
+                yAxisSelect.value = columns[1];
+            }
+        }
+
+        function updateChart() {
+            const chartType = document.getElementById('chartType').value;
+            const xAxis = document.getElementById('xAxis').value;
+            const yAxis = document.getElementById('yAxis').value;
+            const chartTitle = document.getElementById('chartTitle').value;
+            const xAxisLabel = document.getElementById('xAxisLabel').value;
+            const yAxisLabel = document.getElementById('yAxisLabel').value;
+            const colorScheme = document.getElementById('colorScheme').value;
+            
+            createChart(chartData, chartType, xAxis, yAxis, chartTitle, xAxisLabel, yAxisLabel, colorScheme);
+        }
+
+        function createChart(data, chartType, xAxis, yAxis, chartTitle, xAxisLabel, yAxisLabel) {
+            const ctx = document.getElementById('resultChart').getContext('2d');
+            const chartContainer = document.getElementById('chartContainer');
+            const colorScheme = document.getElementById('colorScheme').value;
+            
+            if (!data || data.length === 0) {
+                chartContainer.style.display = 'none';
+                return;
+            }
+
+            if (currentChart) {
+                currentChart.destroy();
+            }
+            
+            chartContainer.style.display = 'block';
+            
+            const labels = data.map(item => item[xAxis]);
+            let datasets;
+
+            if (chartType === 'pie' || chartType === 'doughnut') {
+                datasets = [{
+                    data: data.map(item => item[yAxis]),
+                    backgroundColor: getColors(colorScheme, data.length),
+                }];
+            } else {
+                const numericColumns = Object.keys(data[0]).filter(key => typeof data[0][key] === 'number');
+                datasets = numericColumns.map((column, index) => ({
+                    label: column,
+                    data: data.map(item => item[column]),
+                    backgroundColor: getColors(colorScheme, numericColumns.length)[index],
+                    borderColor: getColors(colorScheme, numericColumns.length)[index],
+                }));
+            }
+
+            currentChart = new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: chartTitle
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: xAxisLabel
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: yAxisLabel
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function exportChart() {
+            const link = document.createElement('a');
+            link.download = 'chart.png';
+            link.href = document.getElementById('resultChart').toDataURL();
+            link.click();
+        }
+
     </script>
 </body>
 </html>
