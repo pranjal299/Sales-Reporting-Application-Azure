@@ -551,6 +551,7 @@
                         <option value="bar">Bar Chart</option>
                         <option value="line">Line Chart</option>
                         <option value="pie">Pie Chart</option>
+                        <option value="doughnut">Doughnut Chart</option>
                         <option value="scatter">Scatter Plot</option>
                     </select>
                 </div>
@@ -1103,77 +1104,124 @@ erDiagram
             createChart(chartData, chartType, xAxis, yAxis, chartTitle, xAxisLabel, yAxisLabel, colorScheme);
         }
 
-        function createChart(data, chartType, xAxis, yAxis, chartTitle, xAxisLabel, yAxisLabel) {
-            const ctx = document.getElementById('resultChart').getContext('2d');
-            const chartContainer = document.getElementById('chartContainer');
-            const colorScheme = document.getElementById('colorScheme').value;
-            
-            if (!data || data.length === 0) {
-                chartContainer.style.display = 'none';
-                return;
-            }
+        function createChart(data, chartType, xAxis, yAxis, chartTitle, xAxisLabel, yAxisLabel, colorScheme) {
+    const ctx = document.getElementById('resultChart').getContext('2d');
+    const chartContainer = document.getElementById('chartContainer');
+    
+    if (!data || data.length === 0) {
+        chartContainer.style.display = 'none';
+        return;
+    }
+    if (currentChart) {
+        currentChart.destroy();
+    }
+    
+    chartContainer.style.display = 'block';
+    
+    const labels = data.map(item => item[xAxis]);
+    let datasets;
 
-            if (currentChart) {
-                currentChart.destroy();
-            }
-            
-            chartContainer.style.display = 'block';
-            
-            const labels = data.map(item => item[xAxis]);
-            let datasets;
+    // Set default chart title based on chart type and axes
+    let defaultTitle;
+    if (chartType === 'pie' || chartType === 'doughnut') {
+        defaultTitle = `Distribution of ${yAxis} by ${xAxis}`;
+    } else {
+        defaultTitle = `${yAxis} vs ${xAxis}`;
+    }
+    
+    // Use the provided chartTitle if it's not empty, otherwise use the default title
+    const finalChartTitle = chartTitle || defaultTitle;
 
-            if (chartType === 'pie' || chartType === 'doughnut') {
-                datasets = [{
-                    data: data.map(item => item[yAxis]),
-                    backgroundColor: getColors(colorScheme, data.length),
-                }];
-            } else {
-                const numericColumns = Object.keys(data[0]).filter(key => typeof data[0][key] === 'number');
-                datasets = numericColumns.map((column, index) => ({
-                    label: column,
-                    data: data.map(item => item[column]),
-                    backgroundColor: getColors(colorScheme, numericColumns.length)[index],
-                    borderColor: getColors(colorScheme, numericColumns.length)[index],
-                }));
-            }
+    if (chartType === 'pie' || chartType === 'doughnut') {
+        datasets = [{
+            data: data.map(item => item[yAxis]),
+            backgroundColor: getColors(colorScheme, data.length),
+            label: yAxis
+        }];
+    } else {
+        datasets = [{
+            label: yAxis,
+            data: data.map(item => item[yAxis]),
+            backgroundColor: getColors(colorScheme, 1)[0],
+            borderColor: getColors(colorScheme, 1)[0],
+            fill: false
+        }];
+    }
 
-            currentChart = new Chart(ctx, {
-                type: chartType,
-                data: {
-                    labels: labels,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: chartTitle
-                        },
-                        legend: {
-                            display: true,
-                            position: 'top'
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            title: {
+                display: true,
+                text: finalChartTitle
+            },
+            legend: {
+                display: chartType === 'pie' || chartType === 'doughnut',
+                position: 'top',
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        if (label) {
+                            label += ': ';
                         }
-                    },
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: xAxisLabel
+                        if (context.parsed !== null) {
+                            label += context.parsed;
+                            if (chartType === 'pie' || chartType === 'doughnut') {
+                                label += ` ${yAxis}`;
                             }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: yAxisLabel
-                            },
-                            beginAtZero: true
                         }
+                        return label;
                     }
                 }
-            });
+            }
+        },
+        scales: {
+            x: {
+                display: chartType !== 'pie' && chartType !== 'doughnut',
+                title: {
+                    display: chartType !== 'pie' && chartType !== 'doughnut',
+                    text: xAxisLabel || xAxis
+                }
+            },
+            y: {
+                display: chartType !== 'pie' && chartType !== 'doughnut',
+                title: {
+                    display: chartType !== 'pie' && chartType !== 'doughnut',
+                    text: yAxisLabel || yAxis
+                },
+                beginAtZero: true
+            }
         }
+    };
+
+    if (chartType === 'pie' || chartType === 'doughnut') {
+        options.plugins.subtitle = {
+            display: true,
+            text: `Values represent: ${yAxis}`,
+            position: 'bottom'
+        };
+    }
+
+    if (chartType === 'scatter') {
+        options.scales.x.type = 'linear';
+        options.scales.y.type = 'linear';
+        datasets[0].pointBackgroundColor = datasets[0].backgroundColor;
+        delete datasets[0].backgroundColor;
+        delete datasets[0].borderColor;
+    }
+
+    currentChart = new Chart(ctx, {
+        type: chartType,
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: options
+    });
+}
 
         function exportChart() {
             const link = document.createElement('a');
