@@ -345,12 +345,15 @@ def submit_query():
 
     query = request.json.get('query')
     
+    # Add the Azure SQL compatibility instruction to the user query
+    azure_sql_query = f"{query} (Make sure the SQL query generated is compatible with Azure SQL)"
+
     # Get the SQL query from the Together API
     response = client.chat.completions.create(
         model="meta-llama/Llama-3-70b-chat-hf",
         messages=[
             {"role": "system", "content": "You are a Natural Language to SQL Query Converter. The queries should be compatible with Azure SQL. Give the SQL query directly without anything else before or after. The schemas of tables are as follows - a) Transactions - transaction_id, timestamp, customer_id, product_id, employee_id, payment_id, quantity, total_amount b) Products - product_id, product_name, product_category, unit_price c) Payments - payment_id, payment_type d) Employees - employee_id, employee_name, employee_ssn, employee_phone, employee_state, employee_city, employee_postal e) Customers - customer_id, customer_first_name, customer_last_name, customer_city, customer_state, customer_postal, customer_email, customer_phone"},
-            {"role": "user", "content": query},
+            {"role": "user", "content": azure_sql_query},
         ],
     )
 
