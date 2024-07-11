@@ -448,6 +448,46 @@
     margin-bottom: 0;
 }
 
+    #templateCategories, #queryList {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .category-item, .query-item {
+        cursor: pointer;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+    .category-item:hover, .query-item:hover {
+        background-color: #f0f0f0;
+    }
+
+    .back-arrow {
+        cursor: pointer;
+        margin-right: 10px;
+        display: none;
+    }
+
+    .back-arrow:hover svg {
+        stroke: #007bff;
+    }
+
+    .back-arrow:hover {
+        stroke: #007bff;
+    }
+
+        .template-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
     </style>
     <!-- Include Mermaid.js from CDN -->
     <script type="module">
@@ -479,9 +519,20 @@
             <a href="#" id="dataModelLink" style="font-size: 0.8em">[View Data Model]</a>
         </p> 
             <div id="remainingQueries"></div>
-            <div id="queryTemplates">
-                <h3>Query Templates</h3>
-                <div id="templateList"></div>
+            <!-- Query Templates Section -->
+            <div id="queryTemplates" class="section">
+                <div class="template-header">
+                    <svg class="back-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <h3>Query Templates</h3>
+                </div>
+                <div id="templateCategories"></div>
+                <div id="templateQueries" style="display: none;">
+                    <h4 id="categoryTitle"></h4>
+                    <div id="queryList"></div>
+                </div>
             </div>
             <br>
             <div class="form-group">
@@ -1031,26 +1082,115 @@ erDiagram
             });
 
         const queryTemplates = [
-            { name: "Total Sales by Product", query: "What is the total sales amount for each product?" },
-            { name: "Top 5 Customers", query: "Who are the top 5 customers by total purchase amount?" },
-            { name: "Monthly Sales Trend", query: "Show the total sales amount for each month" },
-            { name: "Employee Performance", query: "Which employees have the highest total sales?" },
-            { name: "Popular Payment Methods", query: "What are the most commonly used payment methods?" }
+            {
+                category: "Sales Analysis",
+                queries: [
+                    "What is the total sales amount for each product?",
+                    "Show the monthly sales trend over the last year.",
+                    "Which are the top 5 best-selling products by quantity?",
+                    "What is the average transaction amount for each product category?",
+                    "How do sales vary by day of the week?",
+                    "What is the year-over-year growth in sales for each product category?"
+                ]
+            },
+            {
+                category: "Customer Insights",
+                queries: [
+                    "Who are the top 10 customers by total purchase amount?",
+                    "What is the average purchase frequency for our customers?",
+                    "Which customers have not made a purchase in the last 6 months?",
+                    "What is the distribution of customers across different states?",
+                    "Who are the customers that have purchased products from all categories?",
+                    "What is the average customer lifetime value?"
+                ]
+            },
+            {
+                category: "Product Performance",
+                queries: [
+                    "Which products have the highest profit margin?",
+                    "What are the top 5 product combinations that are often bought together?",
+                    "Which products have shown the most growth in sales over the past year?",
+                    "What is the seasonal trend for each product category?",
+                    "Which products are underperforming compared to the average in their category?",
+                    "What is the average time between restocks for each product?"
+                ]
+            },
+            {
+                category: "Employee Performance",
+                queries: [
+                    "Who are the top 5 employees by total sales amount?",
+                    "What is the average transaction value for each employee?",
+                    "How does employee performance vary by region?",
+                    "Which employees have the highest customer retention rate?",
+                    "What is the trend of each employee's sales performance over the past year?",
+                    "Who are the employees with the most diverse product category sales?"
+                ]
+            },
+            {
+                category: "Payment and Pricing Analysis",
+                queries: [
+                    "What are the most commonly used payment methods?",
+                    "How does the average transaction amount vary by payment method?",
+                    "What is the distribution of transaction amounts across different price ranges?",
+                    "Which payment methods are preferred for high-value transactions?",
+                    "How has the usage of different payment methods changed over time?",
+                    "What is the average discount given for each product category?"
+                ]
+            },
+            {
+                category: "Geographic and Temporal Patterns",
+                queries: [
+                    "What is the total sales amount for each state?",
+                    "How do sales patterns differ between weekdays and weekends?",
+                    "Which cities have shown the highest growth in sales over the past year?",
+                    "What are the peak hours for transactions in different regions?",
+                    "How does the product category preference vary by state?",
+                    "What is the average shipping time for products to different states?"
+                ]
+            }
         ];
 
         function populateQueryTemplates() {
-            const templateList = document.getElementById('templateList');
-            templateList.innerHTML = '';
-            queryTemplates.forEach(template => {
-                const item = document.createElement('div');
-                item.className = 'template-item';
-                item.textContent = template.name;
-                item.onclick = () => {
-                    document.getElementById('queryInput').value = template.query;
-                };
-                templateList.appendChild(item);
-            });
-        }
+    const templateCategories = document.getElementById('templateCategories');
+    templateCategories.innerHTML = '';
+    queryTemplates.forEach((category, index) => {
+        const item = document.createElement('div');
+        item.className = 'category-item';
+        item.textContent = category.category;
+        item.onclick = () => showQueries(index);
+        templateCategories.appendChild(item);
+    });
+}
+
+function showQueries(categoryIndex) {
+    const templateCategories = document.getElementById('templateCategories');
+    const templateQueries = document.getElementById('templateQueries');
+    const categoryTitle = document.getElementById('categoryTitle');
+    const queryList = document.getElementById('queryList');
+    const backArrow = document.querySelector('.back-arrow');
+
+    templateCategories.style.display = 'none';
+    templateQueries.style.display = 'block';
+    backArrow.style.display = 'inline-block';
+    categoryTitle.textContent = queryTemplates[categoryIndex].category;
+
+    queryList.innerHTML = '';
+    queryTemplates[categoryIndex].queries.forEach(query => {
+        const item = document.createElement('div');
+        item.className = 'query-item';
+        item.textContent = query;
+        item.onclick = () => {
+            document.getElementById('queryInput').value = query;
+        };
+        queryList.appendChild(item);
+    });
+}
+
+document.querySelector('.back-arrow').addEventListener('click', () => {
+    document.getElementById('templateCategories').style.display = 'grid';
+    document.getElementById('templateQueries').style.display = 'none';
+    document.querySelector('.back-arrow').style.display = 'none';
+});
 
         populateQueryTemplates();
 
