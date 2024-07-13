@@ -12,10 +12,7 @@
         <h1>Sales Reporting System</h1>
     </header>
     <nav>
-        <button class="nav-toggle" aria-label="toggle navigation">
-            <span class="hamburger"></span>
-        </button>
-        <ul class="nav-menu">
+        <ul>
             <li><a href="/">Files</a></li>
             <li><a href="/tables">Tables</a></li>
             <li><a href="/stored_procedures">Stored Procedures</a></li>
@@ -153,16 +150,6 @@
                 });
             }
         });
-
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const navToggle = document.querySelector('.nav-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-
-        navToggle.addEventListener('click', () => {
-            navToggle.classList.toggle('active');
-            navMenu.classList.toggle('show');
-        });
-    });
-</script>
+    </script>
 </body>
 </html>
