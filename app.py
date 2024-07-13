@@ -1,5 +1,7 @@
-from flask import Flask, request, render_template, jsonify, send_file, session
+from flask import Flask, request, render_template, jsonify, send_file, session, redirect, url_for
 from flask_session import Session
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 from azure.storage.blob import BlobServiceClient
 from azure.identity import ClientSecretCredential 
 from azure.mgmt.resource import ResourceManagementClient
@@ -20,6 +22,7 @@ from logging.handlers import RotatingFileHandler
 
 app = Flask(__name__, static_url_path='', static_folder='static')
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SECRET_KEY'] = '+A%&`LA*bq*5yvJ'  # Change this to a random secret key
 Session(app)
 
 # Azure Storage Account settings
@@ -423,7 +426,36 @@ def suggest_chart():
 def landing():
     return render_template('files.html')
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in' not in session:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        # In a real application, you would check these credentials against a database
+        # For this example, we'll use hardcoded credentials
+        if username == 'admin' and check_password_hash(generate_password_hash('password123'), password):
+            session['logged_in'] = True
+            return redirect(url_for('admin'))
+        else:
+            return render_template('login.html', error='Invalid credentials')
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('index'))
+
 @app.route('/admin')
+@login_required
 def admin():
     return render_template('admin.html')
 

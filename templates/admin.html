@@ -6,33 +6,6 @@
     <title>Sales Reporting System - Admin</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-styles.css') }}">
-    <style>
-                #loginForm {
-            max-width: 300px;
-            margin: 100px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        #loginForm input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            box-sizing: border-box;
-        }
-        #loginForm button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        #adminContent {
-            display: none;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -51,16 +24,11 @@
             <li><a href="/visualizations">BI Dashboards</a></li>
             <li><a href="/explore_data">QuickQueryAI</a></li>
             <li><a href="/admin">Admin</a></li>
+            <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
-    <div id="loginForm">
-        <h2>Admin Login</h2>
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <button onclick="authenticate()">Login</button>
-    </div>
 
-    <div id="adminContent" class="container">
+    <div class="container">
         <h2>Admin Dashboard</h2>
         
         <!-- Tables Section -->
@@ -84,20 +52,6 @@
         </div>
     </div>
     <script>
-
-        function authenticate() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Replace these with your desired username and password
-            if (username === 'admin' && password === 'password123') {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('adminContent').style.display = 'block';
-            } else {
-                alert('Invalid credentials. Access denied.');
-            }
-        }
-
         // Tables Management
         document.getElementById('listTablesBtn').addEventListener('click', function() {
             fetch('/list-tables')
