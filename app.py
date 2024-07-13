@@ -161,10 +161,6 @@ def delete_blobs():
         container_client.delete_blob(blob)
     return jsonify({'status': 'success', 'message': 'All blobs have been deleted.'})
 
-@app.route('/tables')
-def tables():
-    return render_template('tables.html')
-
 @app.route('/list-tables')
 def list_tables():
     conn = pyodbc.connect(DB_CONNECTION_STRING)
@@ -232,36 +228,6 @@ def create_tables():
 def table_data():
     return render_template('table_data.html')
 
-@app.route('/pipeline-status')
-def pipeline_status():
-    pipeline_runs = adf_client.pipeline_runs.query_by_factory(
-        rg_name,
-        df_name,
-        {"lastUpdatedAfter": datetime.now() - timedelta(days=1), 
-         "lastUpdatedBefore": datetime.now() + timedelta(days=1)}
-    )
-
-    # Collect runs for each pipeline
-    runs_by_pipeline = {pipeline: [] for pipeline in pipelines_of_interest}
-    for run in pipeline_runs.value:
-        if run.pipeline_name in pipelines_of_interest:
-            runs_by_pipeline[run.pipeline_name].append(run)
-
-    user_timezone = request.args.get('timezone', 'UTC')
-    local_zone = pytz.timezone(user_timezone)
-
-    # Sort runs by last updated time and pick the latest
-    latest_runs = {}
-    for pipeline, runs in runs_by_pipeline.items():
-        if runs:
-            latest_run = sorted(runs, key=lambda x: x.last_updated, reverse=True)[0]
-            local_time = latest_run.last_updated.astimezone(local_zone)
-            latest_runs[pipeline] = {
-                'Status': latest_run.status,
-                'Last Updated': local_time.strftime("%Y-%m-%d %H:%M:%S")
-            }
-
-    return jsonify(latest_runs)
 
 @app.route('/load-table-data/<table_name>')
 def load_specific_table_data(table_name):
@@ -283,10 +249,6 @@ def load_specific_table_data(table_name):
     table_data = [dict(zip(columns, row)) for row in rows]
 
     return jsonify(table_data)
-
-@app.route('/stored_procedures')
-def stored_procedures():
-    return render_template('stored_procedures.html')
 
 @app.route('/list-stored-procedures')
 def list_stored_procedures():
@@ -460,6 +422,10 @@ def suggest_chart():
 @app.route('/files')
 def landing():
     return render_template('files.html')
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

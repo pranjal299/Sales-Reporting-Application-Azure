@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Reporting System - Admin</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Sales Reporting System</h1>
+    </header>
+    <nav>
+        <div class="menu-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="nav-list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/files">Upload Files</a></li>
+            <li><a href="/table_data">Data Preview</a></li>
+            <li><a href="/visualizations">BI Dashboards</a></li>
+            <li><a href="/explore_data">QuickQueryAI</a></li>
+            <li><a href="/admin">Admin</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h2>Admin Dashboard</h2>
+        
+        <!-- Tables Section -->
+        <div class="section">
+            <div class="section-header">Tables Management</div>
+            <p>Review, create, and manage database tables.</p>
+            <button type="button" id="listTablesBtn">List Current Tables</button>
+            <div class="blob-list" id="tablesList">No tables listed</div>
+            <button type="button" id="deleteTablesBtn" class="delete-btn">Delete All Tables</button>
+            <button type="button" id="createTablesBtn" class="create-tables-btn">Create All Tables</button>
+        </div>
+        
+        <!-- Stored Procedures Section -->
+        <div class="section">
+            <div class="section-header">Stored Procedures Management</div>
+            <p>Review, create, and manage stored procedures.</p>
+            <button type="button" id="listProceduresBtn">List Current Procedures</button>
+            <div class="blob-list" id="proceduresList">No procedures listed</div>
+            <button type="button" id="deleteProceduresBtn" class="delete-btn">Delete All Procedures</button>
+            <button type="button" id="createProceduresBtn" class="create-procedures-btn">Create All Procedures</button>
+        </div>
+    </div>
+    <script>
+        // Tables Management
+        document.getElementById('listTablesBtn').addEventListener('click', function() {
+            fetch('/list-tables')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('tablesList').innerHTML = data.tables.length ? data.tables.join('<br>') : '<p>No tables found.</p>';
+                })
+                .catch(error => console.error('Error:', error));
+        });
+        
+        document.getElementById('deleteTablesBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete all tables? This cannot be undone.')) {
+                fetch('/delete-tables', { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('All tables have been deleted.');
+                            document.getElementById('listTablesBtn').click();
+                        } else {
+                            alert('An error occurred while attempting to delete tables.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while attempting to delete tables.');
+                    });
+            }
+        });
+
+        document.getElementById('createTablesBtn').addEventListener('click', function() {
+            fetch('/create-tables', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Tables have been created.');
+                        document.getElementById('listTablesBtn').click();
+                    } else {
+                        alert('An error occurred while attempting to create tables.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while attempting to create tables.');
+                });
+        });
+
+        // Stored Procedures Management
+        document.getElementById('listProceduresBtn').addEventListener('click', function() {
+            fetch('/list-stored-procedures')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('proceduresList').innerHTML = data.procedures.length ? data.procedures.join('<br>') : '<p>No procedures found.</p>';
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('deleteProceduresBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete all procedures? This cannot be undone.')) {
+                fetch('/delete-stored-procedures', { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('All procedures have been deleted.');
+                            document.getElementById('listProceduresBtn').click();
+                        } else {
+                            alert('An error occurred while attempting to delete procedures.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while attempting to delete procedures.');
+                    });
+            }
+        });
+
+        document.getElementById('createProceduresBtn').addEventListener('click', function() {
+            fetch('/create-stored-procedures', { method: 'POST' })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Procedures have been created.');
+                        document.getElementById('listProceduresBtn').click();
+                    } else {
+                        alert('An error occurred while attempting to create procedures.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while attempting to create procedures.');
+                });
+        });
+
+        // Mobile menu toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navList = document.querySelector('.nav-list');
+        mobileMenu.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
