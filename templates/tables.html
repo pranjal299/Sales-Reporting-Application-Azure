@@ -102,6 +102,14 @@
                 alert('An error occurred while attempting to create tables.');
             });
         });
+
+                // JavaScript for mobile menu toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navList = document.querySelector('.nav-list');
+
+        mobileMenu.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
     </script>
 </body>
 </html>
