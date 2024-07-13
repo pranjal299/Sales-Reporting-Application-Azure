@@ -8,6 +8,7 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 header {
@@ -23,7 +24,7 @@ h1, h2 {
 
 /* Navigation styles */
 nav {
-    width: 100%; /* Ensure nav covers the full width */
+    width: 100vw; /* Ensure nav covers the full viewport width */
     background-color: #333;
     padding: 7px 0; /* Adjust this padding to control the thickness */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -51,6 +52,7 @@ nav .nav-list {
     display: flex;
     justify-content: center;
     width: 100%; /* Ensure the nav-list covers the full width */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 nav .nav-list li {
