@@ -456,5 +456,10 @@ def suggest_chart():
     chart_type = suggest_chart_type(data)
     return jsonify({'chartType': chart_type})
 
+# Add this new route for the landing page
+@app.route('/files')
+def landing():
+    return render_template('files.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
