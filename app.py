@@ -459,5 +459,23 @@ def logout():
 def admin():
     return render_template('admin.html')
 
+@app.route('/run-edited-sql', methods=['POST'])
+def run_edited_sql():
+
+    sql_query = request.json.get('sql')
+    
+    try:
+        # Execute the SQL query
+        conn = pyodbc.connect(DB_CONNECTION_STRING)
+        cursor = conn.cursor()
+        cursor.execute(sql_query)
+        columns = [column[0] for column in cursor.description]
+        rows = cursor.fetchall()
+        results = [dict(zip(columns, row)) for row in rows]
+        return jsonify(results=results)
+    except Exception as e:
+        print(str(e))
+        return jsonify(error=str(e))
+
 if __name__ == '__main__':
     app.run(debug=True)

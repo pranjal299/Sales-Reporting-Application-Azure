@@ -1496,8 +1496,37 @@ runSqlButton.addEventListener('click', function(event) {
     event.preventDefault();
     const editedSql = document.getElementById('sqlQueryCode').textContent;
     console.log('Running edited SQL:', editedSql);
-    // Here you would typically send the edited SQL to the server
-    // For now, we'll just log it to the console
+    
+    // Show loading state
+    document.getElementById('queryResultsContainer').innerHTML = '<p>Loading...</p>';
+    document.getElementById('queryResultsSection').style.display = 'block';
+    document.getElementById('visualizationSection').style.display = 'none';
+
+    // Send the edited SQL to the server
+    fetch('/run-edited-sql', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ sql: editedSql })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            document.getElementById('queryResultsContainer').innerHTML = `<p>Error: ${data.error}</p>`;
+        } else {
+            allResults = data.results;
+            currentPage = 1;
+            displayResults();
+            chartData = data.results;
+            populateAxisSelects(chartData);
+            suggestAndCreateChart(chartData);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('queryResultsContainer').innerHTML = '<p>An error occurred while processing your query.</p>';
+    });
 });
 
 // Prevent the Run button from making the pre element lose focus
