@@ -853,17 +853,19 @@ erDiagram
         const resultsPerPage = 10;
         let allResults = [];
 
-        document.querySelector('#queryDetails .collapsible-header').addEventListener('click', function() {
-            this.classList.toggle('active');
-            const content = this.nextElementSibling;
-            if (content.style.display === 'block') {
-                content.style.display = 'none';
-                this.textContent = 'Show SQL Query Generated';
-            } else {
-                content.style.display = 'block';
-                this.textContent = 'Hide SQL Query Generated';
-            }
-        });
+document.querySelector('#queryDetails .collapsible-header').addEventListener('click', function() {
+    if (!this.classList.contains('loading')) {
+        this.classList.toggle('active');
+        const content = this.nextElementSibling;
+        if (content.style.display === 'block') {
+            content.style.display = 'none';
+            this.textContent = this.textContent.replace('Hide', 'Show');
+        } else {
+            content.style.display = 'block';
+            this.textContent = this.textContent.replace('Show', 'Hide');
+        }
+    }
+});
 
         document.getElementById('submitQueryBtn').addEventListener('click', function() {
             const query = document.getElementById('queryInput').value;
@@ -1498,6 +1500,15 @@ runSqlButton.addEventListener('click', function(event) {
     console.log('Running edited SQL:', editedSql);
     
     // Show loading state
+    const queryDetailsDiv = document.getElementById('queryDetails');
+    const collapsibleHeader = queryDetailsDiv.querySelector('.collapsible-header');
+    const sqlQueryCode = document.getElementById('sqlQueryCode');
+    
+    collapsibleHeader.classList.add('loading');
+    collapsibleHeader.innerHTML = '<div class="loading-spinner"></div>Running SQL Query';
+    collapsibleHeader.style.cursor = 'default';
+    sqlQueryCode.parentElement.style.display = 'none';
+    
     document.getElementById('queryResultsContainer').innerHTML = '<p>Loading...</p>';
     document.getElementById('queryResultsSection').style.display = 'block';
     document.getElementById('visualizationSection').style.display = 'none';
@@ -1514,6 +1525,10 @@ runSqlButton.addEventListener('click', function(event) {
     .then(data => {
         if (data.error) {
             document.getElementById('queryResultsContainer').innerHTML = `<p>Error: ${data.error}</p>`;
+            collapsibleHeader.classList.remove('loading');
+            collapsibleHeader.innerHTML = 'Show Edited SQL Query';
+            collapsibleHeader.style.cursor = 'pointer';
+            sqlQueryCode.parentElement.style.display = 'none';
         } else {
             allResults = data.results;
             currentPage = 1;
@@ -1521,11 +1536,21 @@ runSqlButton.addEventListener('click', function(event) {
             chartData = data.results;
             populateAxisSelects(chartData);
             suggestAndCreateChart(chartData);
+            
+            // Update collapsible header
+            collapsibleHeader.classList.remove('loading');
+            collapsibleHeader.innerHTML = 'Show Edited SQL Query';
+            collapsibleHeader.style.cursor = 'pointer';
+            sqlQueryCode.parentElement.style.display = 'none';
         }
     })
     .catch(error => {
         console.error('Error:', error);
         document.getElementById('queryResultsContainer').innerHTML = '<p>An error occurred while processing your query.</p>';
+        collapsibleHeader.classList.remove('loading');
+        collapsibleHeader.innerHTML = 'Show Edited SQL Query';
+        collapsibleHeader.style.cursor = 'pointer';
+        sqlQueryCode.parentElement.style.display = 'none';
     });
 });
 
