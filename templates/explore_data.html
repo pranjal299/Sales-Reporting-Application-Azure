@@ -380,7 +380,6 @@
             padding: 8px;
             font-size: 12px;
             line-height: 1.4;
-            max-height: 250px;
             overflow-y: auto;
             display: none;
         }
@@ -1509,9 +1508,21 @@ runSqlButton.addEventListener('click', function(event) {
     collapsibleHeader.style.cursor = 'default';
     sqlQueryCode.parentElement.style.display = 'none';
     
-    document.getElementById('queryResultsContainer').innerHTML = '<p>Loading...</p>';
-    document.getElementById('queryResultsSection').style.display = 'block';
-    document.getElementById('visualizationSection').style.display = 'none';
+    // Hide and reset the results section
+    const queryResultsSection = document.getElementById('queryResultsSection');
+    queryResultsSection.style.display = 'none';
+    document.getElementById('queryResultsContainer').innerHTML = '';
+    
+    // Hide visualization section and reset visualization button
+    const visualizationSection = document.getElementById('visualizationSection');
+    visualizationSection.style.display = 'none';
+    setVisualizeButtonInitialState();
+    
+    // Destroy the current chart if it exists
+    if (currentChart) {
+        currentChart.destroy();
+        currentChart = null;
+    }
 
     // Send the edited SQL to the server
     fetch('/run-edited-sql', {
@@ -1524,18 +1535,21 @@ runSqlButton.addEventListener('click', function(event) {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            document.getElementById('queryResultsContainer').innerHTML = `<p>Error: ${data.error}</p>`;
+            // Show error message in the query details section
             collapsibleHeader.classList.remove('loading');
-            collapsibleHeader.innerHTML = 'Show Edited SQL Query';
+            collapsibleHeader.innerHTML = 'Error in SQL Query';
             collapsibleHeader.style.cursor = 'pointer';
-            sqlQueryCode.parentElement.style.display = 'none';
+            sqlQueryCode.textContent = `Error: ${data.error}`;
+            sqlQueryCode.parentElement.style.display = 'block';
         } else {
             allResults = data.results;
             currentPage = 1;
+            
+            // Show and populate the results section
+            queryResultsSection.style.display = 'block';
             displayResults();
             chartData = data.results;
             populateAxisSelects(chartData);
-            suggestAndCreateChart(chartData);
             
             // Update collapsible header
             collapsibleHeader.classList.remove('loading');
@@ -1546,11 +1560,12 @@ runSqlButton.addEventListener('click', function(event) {
     })
     .catch(error => {
         console.error('Error:', error);
-        document.getElementById('queryResultsContainer').innerHTML = '<p>An error occurred while processing your query.</p>';
+        // Show error message in the query details section
         collapsibleHeader.classList.remove('loading');
-        collapsibleHeader.innerHTML = 'Show Edited SQL Query';
+        collapsibleHeader.innerHTML = 'Error in SQL Query';
         collapsibleHeader.style.cursor = 'pointer';
-        sqlQueryCode.parentElement.style.display = 'none';
+        sqlQueryCode.textContent = 'An error occurred while processing your query.';
+        sqlQueryCode.parentElement.style.display = 'block';
     });
 });
 
