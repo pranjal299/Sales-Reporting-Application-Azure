@@ -224,6 +224,24 @@
             display: none;
         }
 
+        .run-sql-button {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    display: none;
+}
+
+#queryDetails pre {
+    position: relative;
+    padding-bottom: 30px;
+}
+
         #historyList {
             max-height: 300px;
             overflow-y: auto;
@@ -577,7 +595,7 @@
             </div>
             <div id="queryDetails" style="display: none;">
                 <div class="collapsible-header">Show SQL Query Generated</div>
-                <pre><code id="sqlQueryCode"></code></pre>
+                <pre><code id="sqlQueryCode"></code><button id="runSqlButton" class="run-sql-button">Run</button></pre>
             </div>
         </div>
 
@@ -1455,17 +1473,37 @@ erDiagram
             navList.classList.toggle('active');
         });
 
-        // JavaScript for making the SQL query editable
-        document.getElementById('sqlQueryCode').parentElement.addEventListener('click', function () {
-            this.setAttribute('contenteditable', 'true');
-            this.classList.add('editable');
-            this.focus();
-        });
+const runSqlButton = document.getElementById('runSqlButton');
 
-        document.getElementById('sqlQueryCode').parentElement.addEventListener('blur', function () {
-            this.setAttribute('contenteditable', 'false');
-            this.classList.remove('editable');
-        });
+document.getElementById('sqlQueryCode').parentElement.addEventListener('click', function (event) {
+    if (event.target !== runSqlButton) {
+        this.setAttribute('contenteditable', 'true');
+        this.classList.add('editable');
+        this.focus();
+        runSqlButton.style.display = 'block';
+    }
+});
+
+document.getElementById('sqlQueryCode').parentElement.addEventListener('blur', function (event) {
+    if (!event.relatedTarget || event.relatedTarget.id !== 'runSqlButton') {
+        this.setAttribute('contenteditable', 'false');
+        this.classList.remove('editable');
+        runSqlButton.style.display = 'none';
+    }
+});
+
+runSqlButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    const editedSql = document.getElementById('sqlQueryCode').textContent;
+    console.log('Running edited SQL:', editedSql);
+    // Here you would typically send the edited SQL to the server
+    // For now, we'll just log it to the console
+});
+
+// Prevent the Run button from making the pre element lose focus
+runSqlButton.addEventListener('mousedown', function(event) {
+    event.preventDefault();
+});
 
     </script>
 </body>
