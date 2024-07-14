@@ -66,24 +66,24 @@
         }
 
         th:hover {
-            background-color: #f0f0f0;
-        }
+    background-color: #f0f0f0;
+}
 
-        th::after {
-            content: '';
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+th::after {
+    content: '';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
-        th.sort-asc::after {
-            content: '▲';
-        }
+th.sort-asc::after {
+    content: '▲';
+}
 
-        th.sort-desc::after {
-            content: '▼';
-        }
+th.sort-desc::after {
+    content: '▼';
+}
 
         .results-header {
             display: flex;
@@ -93,14 +93,14 @@
         }
 
         .export-buttons {
-            display: flex;
-            gap: 10px;
-        }
+    display: flex;
+    gap: 10px;
+}
 
-        .header-content {
-            display: inline-block;
-            vertical-align: middle;
-        }
+.header-content {
+    display: inline-block;
+    vertical-align: middle;
+}
 
         .export-btn {
             background-color: #f8f9fa;
@@ -221,6 +221,8 @@
             padding: 8px;
             font-size: 12px;
             line-height: 1.4;
+            max-height: 250px;
+            overflow-y: auto;
             display: none;
         }
 
@@ -268,6 +270,11 @@
 
         .pagination button:hover {
             background-color: #e9ecef;
+        }
+
+        #pageInfo {
+            margin: 0 8px;
+            font-size: 0.9em;
         }
 
         .form-group {
@@ -459,63 +466,54 @@
         }
 
         #chartControls h4 {
-            margin-top: 0; /* Remove top margin */
-        }
+    margin-top: 0; /* Remove top margin */
+}
 
         #chartContainer h4 {
-            margin-top: 0; /* Remove top margin */
-            margin-bottom: 0;
-        }
+    margin-top: 0; /* Remove top margin */
+    margin-bottom: 0;
+}
 
-        #templateCategories, #queryList {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
+    #templateCategories, #queryList {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+    }
 
-        .category-item, .query-item {
-            cursor: pointer;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 12px;
-            line-height: 1.3;
-            transition: background-color 0.3s ease;
-        }
+    .category-item, .query-item {
+        cursor: pointer;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 12px;
+        line-height: 1.3;
+        transition: background-color 0.3s ease;
+    }
 
-        .category-item:hover, .query-item:hover {
-            background-color: #f0f0f0;
-        }
+    .category-item:hover, .query-item:hover {
+        background-color: #f0f0f0;
+    }
 
-        .back-arrow {
-            cursor: pointer;
-            margin-right: 10px;
-            display: none;
-        }
+    .back-arrow {
+        cursor: pointer;
+        margin-right: 10px;
+        display: none;
+    }
 
-        .back-arrow:hover svg {
-            stroke: #007bff;
-        }
+    .back-arrow:hover svg {
+        stroke: #007bff;
+    }
 
-        .back-arrow:hover {
-            stroke: #007bff;
-        }
+    .back-arrow:hover {
+        stroke: #007bff;
+    }
 
         .template-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        /* Add styles for editable SQL query box */
-        .editable {
-            outline: none;
-            border: 1px dashed #888;
-            padding: 8px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+    }
 
     </style>
     <!-- Include Mermaid.js from CDN -->
@@ -547,26 +545,26 @@
         <h2>QuickQueryAI</h2>
         <div class="section">
             <div class="section-header">Ask Your Query</div>
-            <p>
-                Enter your question about the sales data in the input field below, or choose one of the query templates as an example. 
-                Our AI will convert your natural language query into SQL and fetch the results for you.
-                <a href="#" id="dataModelLink" style="font-size: 0.8em">[View Data Model]</a>
-            </p> 
+        <p>
+            Enter your question about the sales data in the input field below, or choose one of the query templates as an example. 
+            Our AI will convert your natural language query into SQL and fetch the results for you.
+            <a href="#" id="dataModelLink" style="font-size: 0.8em">[View Data Model]</a>
+        </p> 
             <div id="remainingQueries"></div>
             <!-- Query Templates Section -->
-            <div id="queryTemplates" class="section">
-                <div class="template-header">
-                    <svg class="back-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    <h3>Query Templates</h3>
-                </div>
-                <div id="templateCategories"></div>
-                <div id="templateQueries" style="display: none;">
-                    <div id="queryList"></div>
-                </div>
+        <div id="queryTemplates" class="section">
+            <div class="template-header">
+                <svg class="back-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <h3>Query Templates</h3>
             </div>
+            <div id="templateCategories"></div>
+            <div id="templateQueries" style="display: none;">
+                <div id="queryList"></div>
+            </div>
+        </div>
             <br>
             <div class="form-group">
                 <input type="text" id="queryInput" class="form-control" placeholder="Enter your query here...">
@@ -584,34 +582,34 @@
         <!-- Query Results Section -->
         <div id="queryResultsSection" class="section" style="display: none;">
             <div class="results-header">
-                <div class="section-header">Results</div>
-                <div class="export-buttons">
-                    <button type="button" onclick="toggleVisualization()" class="export-btn" id="visualizeBtn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="3" y1="9" x2="21" y2="9"></line>
-                            <line x1="9" y1="21" x2="9" y2="9"></line>
-                        </svg>
-                        Visualization
-                    </button>
-                    <button type="button" onclick="exportResults('csv')" class="export-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        CSV
-                    </button>
-                    <button type="button" onclick="exportResults('excel')" class="export-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Excel
-                    </button>
-                </div>
-            </div>
+    <div class="section-header">Results</div>
+    <div class="export-buttons">
+        <button type="button" onclick="toggleVisualization()" class="export-btn" id="visualizeBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            Visualization
+        </button>
+        <button type="button" onclick="exportResults('csv')" class="export-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            CSV
+        </button>
+        <button type="button" onclick="exportResults('excel')" class="export-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Excel
+        </button>
+    </div>
+</div>
             <div class="overflow-container">
                 <div id="queryResultsContainer">
                     <!-- Query results will be displayed here -->
@@ -624,7 +622,7 @@
             </div>
         </div>
 
-        <!-- Visualization Section -->
+                <!-- Visualization Section -->
         <div id="visualizationSection" class="section" style="display: none;">
             <div class="section-header">Visualization</div>
             <div id="chartControls">
@@ -748,30 +746,30 @@ erDiagram
     <script>
 
         function toggleVisualization() {
-            const visualizationSection = document.getElementById('visualizationSection');
-            const visualizeBtn = document.getElementById('visualizeBtn');
-            if (visualizationSection.style.display === 'none') {
-                visualizationSection.style.display = 'block';
-                visualizeBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                    Hide Visualization
-                `;
-            } else {
-                visualizationSection.style.display = 'none';
-                visualizeBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="20" x2="18" y2="10"></line>
-                        <line x1="12" y1="20" x2="12" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="14"></line>
-                        <line x1="3" y1="20" x2="21" y2="20"></line>
-                    </svg>
-                    Visualization
-                `;
-            }
-        }
+    const visualizationSection = document.getElementById('visualizationSection');
+    const visualizeBtn = document.getElementById('visualizeBtn');
+    if (visualizationSection.style.display === 'none') {
+        visualizationSection.style.display = 'block';
+        visualizeBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Hide Visualization
+        `;
+    } else {
+        visualizationSection.style.display = 'none';
+        visualizeBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+                <line x1="3" y1="20" x2="21" y2="20"></line>
+            </svg>
+            Visualization
+        `;
+    }
+}
 
         const colorSchemes = {
             default: ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab'],
@@ -785,7 +783,7 @@ erDiagram
             return colors.slice(0, count);
         }
 
-        // Add event listeners for the new controls
+                // Add event listeners for the new controls
         document.getElementById('updateChart').addEventListener('click', updateChart);
         document.getElementById('exportChart').addEventListener('click', exportChart);
 
@@ -874,17 +872,18 @@ erDiagram
             
             // Check remaining queries first
             const remainingQueries = parseInt(document.getElementById('remainingQueries').textContent.split(': ')[1]);
-
+        
             if (remainingQueries <= 0) {
-                // Immediately show the error
-                queryDetailsDiv.style.display = 'block';
-                collapsibleHeader.classList.remove('loading');
-                collapsibleHeader.innerHTML = 'Error';
-                collapsibleHeader.style.cursor = 'pointer';
-                sqlQueryCode.textContent = 'Error: Daily query limit reached. Please try again tomorrow.';
-                sqlQueryCode.parentElement.style.display = 'block';
-                return; // Exit the function early
-            }
+            // Immediately show the error
+            queryDetailsDiv.style.display = 'block';
+            collapsibleHeader.classList.remove('loading');
+            collapsibleHeader.innerHTML = 'Error';
+            collapsibleHeader.style.cursor = 'pointer';
+            sqlQueryCode.textContent = 'Error: Daily query limit reached. Please try again tomorrow.';
+            sqlQueryCode.parentElement.style.display = 'block';
+            return; // Exit the function early
+        }
+
 
             // Show loading state
             queryDetailsDiv.style.display = 'block';
@@ -963,18 +962,19 @@ erDiagram
                 updateRemainingQueries();
             });
         }
+        
 
         updateRemainingQueries();
 
         function setVisualizeButtonInitialState() {
             const visualizeBtn = document.getElementById('visualizeBtn');
             visualizeBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                    <line x1="3" y1="20" x2="21" y2="20"></line>
-                </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+            <line x1="3" y1="20" x2="21" y2="20"></line>
+        </svg>
                 Visualization
             `;
         }
@@ -994,80 +994,78 @@ erDiagram
         }
 
         function createResultsTable(results) {
-            const table = document.createElement('table');
-            const thead = document.createElement('thead');
-            const headerRow = document.createElement('tr');
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    
+    Object.keys(results[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        th.onclick = () => sortTable(key);
+        th.style.cursor = 'pointer';
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
 
-            Object.keys(results[0]).forEach(key => {
-                const th = document.createElement('th');
-                th.textContent = key;
-                th.onclick = () => sortTable(key);
-                th.style.cursor = 'pointer';
-                headerRow.appendChild(th);
-            });
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
+    const tbody = document.createElement('tbody');
+    results.forEach(row => {
+        const tr = document.createElement('tr');
+        Object.values(row).forEach(value => {
+            const td = document.createElement('td');
+            td.textContent = value;
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
 
-            const tbody = document.createElement('tbody');
-            results.forEach(row => {
-                const tr = document.createElement('tr');
-                Object.values(row).forEach(value => {
-                    const td = document.createElement('td');
-                    td.textContent = value;
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            });
-            table.appendChild(tbody);
+    return table;
+}
+let sortColumn = null;
+let sortDirection = 'asc';
 
-            return table;
+function sortTable(column) {
+    // Toggle sort direction if clicking the same column
+    if (column === sortColumn) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortColumn = column;
+        sortDirection = 'asc';
+    }
+    
+    allResults.sort((a, b) => {
+        let valueA = a[column];
+        let valueB = b[column];
+        
+        // Convert to numbers if possible
+        if (!isNaN(valueA) && !isNaN(valueB)) {
+            valueA = Number(valueA);
+            valueB = Number(valueB);
         }
-
-        let sortColumn = null;
-        let sortDirection = 'asc';
-
-        function sortTable(column) {
-            // Toggle sort direction if clicking the same column
-            if (column === sortColumn) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortColumn = column;
-                sortDirection = 'asc';
-            }
-
-            allResults.sort((a, b) => {
-                let valueA = a[column];
-                let valueB = b[column];
-
-                // Convert to numbers if possible
-                if (!isNaN(valueA) && !isNaN(valueB)) {
-                    valueA = Number(valueA);
-                    valueB = Number(valueB);
-                }
-
-                if (valueA < valueB) {
-                    return sortDirection === 'asc' ? -1 : 1;
-                }
-                if (valueA > valueB) {
-                    return sortDirection === 'asc' ? 1 : -1;
-                }
-                return 0;
-            });
-
-            displayResults();
-            updateSortIndicators();
+        
+        if (valueA < valueB) {
+            return sortDirection === 'asc' ? -1 : 1;
         }
-
-        function updateSortIndicators() {
-            const headers = document.querySelectorAll('th');
-            headers.forEach(header => {
-                header.classList.remove('sort-asc', 'sort-desc');
-                if (header.textContent === sortColumn) {
-                    header.classList.add(sortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
-                }
-            });
+        if (valueA > valueB) {
+            return sortDirection === 'asc' ? 1 : -1;
         }
+        return 0;
+    });
+    
+    displayResults();
+    updateSortIndicators();
+}
 
+function updateSortIndicators() {
+    const headers = document.querySelectorAll('th');
+    headers.forEach(header => {
+        header.classList.remove('sort-asc', 'sort-desc');
+        if (header.textContent === sortColumn) {
+            header.classList.add(sortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+    });
+}
         function updatePaginationControls() {
             const totalPages = Math.ceil(allResults.length / resultsPerPage);
             const pageInfo = document.getElementById('pageInfo');
@@ -1141,7 +1139,7 @@ erDiagram
         function clearHistory() {
             queryHistory = [];
             updateHistoryDisplay();
-
+            
             fetch('/clear-query-history', {
                 method: 'POST',
                 headers: {
@@ -1220,7 +1218,7 @@ erDiagram
                 queries: [
                     "What is the total sales amount for each state?",
                     "How do sales patterns differ between weekdays and weekends?",
-                    "How many unique customers make purchases by month?",
+                    "WHow many unique customers make purchases by month?",
                     "What are the peak hours for transactions in different regions?",
                     "How does the product category preference vary by state?",
                     "What is the average transaction amount for each state?"
@@ -1263,9 +1261,9 @@ erDiagram
         }
 
         document.querySelector('.back-arrow').addEventListener('click', () => {
-            document.getElementById('templateCategories').style.display = 'grid';
-            document.getElementById('templateQueries').style.display = 'none';
-            document.querySelector('.back-arrow').style.display = 'none';
+        document.getElementById('templateCategories').style.display = 'grid';
+        document.getElementById('templateQueries').style.display = 'none';
+        document.querySelector('.back-arrow').style.display = 'none';
         });
 
         populateQueryTemplates();
@@ -1293,15 +1291,15 @@ erDiagram
             const xAxisSelect = document.getElementById('xAxis');
             const yAxisSelect = document.getElementById('yAxis');
             const columns = Object.keys(data[0]);
-
+            
             xAxisSelect.innerHTML = '';
             yAxisSelect.innerHTML = '';
-
+            
             columns.forEach(column => {
                 xAxisSelect.add(new Option(column, column));
                 yAxisSelect.add(new Option(column, column));
             });
-
+            
             // Default Y-axis to the second column if it exists
             if (columns.length > 1) {
                 yAxisSelect.value = columns[1];
@@ -1316,14 +1314,14 @@ erDiagram
             const xAxisLabel = document.getElementById('xAxisLabel').value;
             const yAxisLabel = document.getElementById('yAxisLabel').value;
             const colorScheme = document.getElementById('colorScheme').value;
-
+            
             createChart(chartData, chartType, xAxis, yAxis, chartTitle, xAxisLabel, yAxisLabel, colorScheme);
         }
 
         function createChart(data, chartType, xAxis, yAxis, chartTitle, xAxisLabel, yAxisLabel, colorScheme) {
             const ctx = document.getElementById('resultChart').getContext('2d');
             const chartContainer = document.getElementById('chartContainer');
-
+    
             if (!data || data.length === 0) {
                 chartContainer.style.display = 'none';
                 return;
@@ -1331,9 +1329,9 @@ erDiagram
             if (currentChart) {
                 currentChart.destroy();
             }
-
+    
             chartContainer.style.display = 'block';
-
+            
             const labels = data.map(item => item[xAxis]);
             let datasets;
 
@@ -1344,7 +1342,7 @@ erDiagram
             } else {
                 defaultTitle = `${yAxis} vs ${xAxis}`;
             }
-
+    
             // Use the provided chartTitle if it's not empty, otherwise use the default title
             const finalChartTitle = chartTitle || defaultTitle;
 
@@ -1364,80 +1362,80 @@ erDiagram
                 }];
             }
 
-            const options = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: finalChartTitle
-                    },
-                    legend: {
-                        display: chartType === 'pie' || chartType === 'doughnut',
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed !== null) {
-                                    label += context.parsed;
-                                    if (chartType === 'pie' || chartType === 'doughnut') {
-                                        label += ` ${yAxis}`;
-                                    }
-                                }
-                                return label;
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            title: {
+                display: true,
+                text: finalChartTitle
+            },
+            legend: {
+                display: chartType === 'pie' || chartType === 'doughnut',
+                position: 'top',
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed !== null) {
+                            label += context.parsed;
+                            if (chartType === 'pie' || chartType === 'doughnut') {
+                                label += ` ${yAxis}`;
                             }
                         }
-                    }
-                },
-                scales: {
-                    x: {
-                        display: chartType !== 'pie' && chartType !== 'doughnut',
-                        title: {
-                            display: chartType !== 'pie' && chartType !== 'doughnut',
-                            text: xAxisLabel || xAxis
-                        }
-                    },
-                    y: {
-                        display: chartType !== 'pie' && chartType !== 'doughnut',
-                        title: {
-                            display: chartType !== 'pie' && chartType !== 'doughnut',
-                            text: yAxisLabel || yAxis
-                        },
-                        beginAtZero: true
+                        return label;
                     }
                 }
-            };
-
-            if (chartType === 'pie' || chartType === 'doughnut') {
-                options.plugins.subtitle = {
-                    display: true,
-                    text: `Values represent: ${yAxis}`,
-                    position: 'bottom'
-                };
             }
-
-            if (chartType === 'scatter') {
-                options.scales.x.type = 'linear';
-                options.scales.y.type = 'linear';
-                datasets[0].pointBackgroundColor = datasets[0].backgroundColor;
-                delete datasets[0].backgroundColor;
-                delete datasets[0].borderColor;
-            }
-
-            currentChart = new Chart(ctx, {
-                type: chartType,
-                data: {
-                    labels: labels,
-                    datasets: datasets
+        },
+        scales: {
+            x: {
+                display: chartType !== 'pie' && chartType !== 'doughnut',
+                title: {
+                    display: chartType !== 'pie' && chartType !== 'doughnut',
+                    text: xAxisLabel || xAxis
+                }
+            },
+            y: {
+                display: chartType !== 'pie' && chartType !== 'doughnut',
+                title: {
+                    display: chartType !== 'pie' && chartType !== 'doughnut',
+                    text: yAxisLabel || yAxis
                 },
-                options: options
-            });
+                beginAtZero: true
+            }
         }
+    };
+
+    if (chartType === 'pie' || chartType === 'doughnut') {
+        options.plugins.subtitle = {
+            display: true,
+            text: `Values represent: ${yAxis}`,
+            position: 'bottom'
+        };
+    }
+
+    if (chartType === 'scatter') {
+        options.scales.x.type = 'linear';
+        options.scales.y.type = 'linear';
+        datasets[0].pointBackgroundColor = datasets[0].backgroundColor;
+        delete datasets[0].backgroundColor;
+        delete datasets[0].borderColor;
+    }
+
+    currentChart = new Chart(ctx, {
+        type: chartType,
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: options
+    });
+}
 
         function exportChart() {
             const link = document.createElement('a');
@@ -1447,26 +1445,13 @@ erDiagram
         }
         setVisualizeButtonInitialState();
 
-        // JavaScript for mobile menu toggle
+                // JavaScript for mobile menu toggle
         const mobileMenu = document.getElementById('mobile-menu');
         const navList = document.querySelector('.nav-list');
 
         mobileMenu.addEventListener('click', () => {
             navList.classList.toggle('active');
         });
-
-        // JavaScript for making the SQL query editable
-        document.getElementById('sqlQueryCode').parentElement.addEventListener('click', function () {
-            this.setAttribute('contenteditable', 'true');
-            this.classList.add('editable');
-            this.focus();
-        });
-
-        document.getElementById('sqlQueryCode').parentElement.addEventListener('blur', function () {
-            this.setAttribute('contenteditable', 'false');
-            this.classList.remove('editable');
-        });
-
     </script>
 </body>
 </html>
