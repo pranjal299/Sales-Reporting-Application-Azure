@@ -6,73 +6,107 @@
     <title>Sales Reporting System - Upload Files</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/shared-styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
     <style>
         .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-}
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
 
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 800px;
-}
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 1200px;
+            height: 80%;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
-.file-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-.preview-btn {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-}
+        .preview-btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            margin: 0;
+        }
+
+        #previewContent {
+            height: calc(100% - 60px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #previewContent > div {
+            height: 100%;
+            width: 100%;
+        }
+
+        .handsontable-container {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
     </style>
 </head>
 <body>
-    <div>
+    <header>
         <h1>Sales Reporting System</h1>
-    </div>
-
+    </header>
     <nav>
-        <div id="mobile-menu" class="menu-toggle">
+        <div class="menu-toggle" id="mobile-menu">
             <span class="bar"></span>
             <span class="bar"></span>
             <span class="bar"></span>
@@ -86,31 +120,36 @@
             <li><a href="/admin">Admin</a></li>
         </ul>
     </nav>
-
     <div class="container">
         <h2>Files</h2>
-
+        
+        <!-- List and Delete Old Files Section -->
         <div class="section">
             <div class="section-header">List and Delete Old Uploaded Files</div>
             <p>Review and manage previously uploaded files. Use the list to check existing files and use the delete button to clear all files if needed.</p>
-            <button id="listBlobsBtn">List Current Files</button>
-            <div id="blobsList" class="blob-list">No files listed</div>
-            <button id="deleteBlobsBtn" class="delete-btn">Delete All Files</button>
+            <button type="button" id="listBlobsBtn">List Current Files</button>
+            <div class="blob-list" id="blobsList">No files listed</div>
+            <button type="button" id="deleteBlobsBtn" class="delete-btn">Delete All Files</button>
         </div>
-
+        
+        <!-- Upload New Files Section -->
         <div class="section">
             <div class="section-header">Upload New Files</div>
             <p>Please select the dimension and fact table files to upload. You can drag and drop files into the area below or click to browse your files.</p>
             <div id="dragWrapper" class="drag-area">
-                Drag and drop files here or click to browse
+                <input type="file" id="fileInput" multiple style="display: none;">
+                <p>Drag and drop files here or click to browse</p>
             </div>
             <div id="fileList">No files selected</div>
-            <div class="form-group">
-                <input type="file" id="fileInput" multiple style="display: none;">
-                <button id="uploadBtn">Upload Files</button>
-            </div>
+            <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                <progress id="progressBar" value="0" max="100"></progress>
+                <div class="form-group">
+                    <input type="submit" value="Upload Files" disabled>
+                </div>
+            </form>
         </div>
 
+        <!-- Preview Modal -->
         <div id="previewModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -122,88 +161,188 @@
         </div>
     </div>
     <script>
-// File preview functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
-    const modal = document.getElementById('previewModal');
-    const closeBtn = modal.querySelector('.close');
-    const previewContent = document.getElementById('previewContent');
-    const dragWrapper = document.getElementById('dragWrapper');
+        var uploadForm = document.getElementById('uploadForm');
+        var fileInput = document.getElementById('fileInput');
+        var dragWrapper = document.getElementById('dragWrapper');
+        var fileListDisplay = document.getElementById('fileList');
+        var submitButton = uploadForm.querySelector('input[type="submit"]');
+        var progressBar = document.getElementById('progressBar');
+        var modal = document.getElementById('previewModal');
+        var closeBtn = modal.querySelector('.close');
+        var previewContent = document.getElementById('previewContent');
+        let hot; // Handsontable instance
 
-    // File input change event
-    fileInput.addEventListener('change', handleFileSelection);
+        dragWrapper.onclick = function() {
+            fileInput.click();
+        };
 
-    // Drag and drop events
-    dragWrapper.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dragWrapper.classList.add('highlight');
-    });
+        dragWrapper.ondragover = dragWrapper.ondragenter = function(event) {
+            event.preventDefault();
+            dragWrapper.classList.add('highlight');
+        };
 
-    dragWrapper.addEventListener('dragleave', () => {
-        dragWrapper.classList.remove('highlight');
-    });
+        dragWrapper.ondragleave = function() {
+            dragWrapper.classList.remove('highlight');
+        };
 
-    dragWrapper.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dragWrapper.classList.remove('highlight');
-        handleFileSelection({ target: { files: e.dataTransfer.files } });
-    });
+        dragWrapper.ondrop = function(event) {
+            event.preventDefault();
+            dragWrapper.classList.remove('highlight');
+            fileInput.files = event.dataTransfer.files;
+            updateFileListDisplay();
+        };
 
-    // Click to browse
-    dragWrapper.addEventListener('click', () => {
-        fileInput.click();
-    });
+        fileInput.onchange = updateFileListDisplay;
 
-    // Preview button click event
-    fileList.addEventListener('click', function(e) {
-        if (e.target.classList.contains('preview-btn')) {
-            const fileName = e.target.getAttribute('data-file');
-            const file = Array.from(fileInput.files).find(f => f.name === fileName);
-            if (file) {
-                previewFile(file);
+        function updateFileListDisplay() {
+            var files = Array.from(fileInput.files);
+            fileListDisplay.innerHTML = '';
+            files.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span>${file.name}</span>
+                    <button class="preview-btn" data-file="${file.name}">Preview</button>
+                `;
+                fileListDisplay.appendChild(fileItem);
+            });
+            submitButton.disabled = files.length === 0;
+        }
+
+        uploadForm.onsubmit = function(event) {
+            event.preventDefault();
+            var formData = new FormData();
+            Array.from(fileInput.files).forEach(file => {
+                formData.append('files[]', file);
+            });
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload', true);
+
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    var percentComplete = (e.loaded / e.total) * 100;
+                    progressBar.value = percentComplete;
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert('Upload complete!');
+                } else {
+                    alert('An error occurred during the upload.');
+                }
+                submitButton.disabled = true;
+            };
+
+            xhr.send(formData);
+        };
+        
+        document.getElementById('listBlobsBtn').addEventListener('click', function() {
+            fetch('/list-blobs')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.blobs.length === 0) {
+                        document.getElementById('blobsList').innerHTML = '<p>No files found.</p>';
+                    } else {
+                        document.getElementById('blobsList').innerHTML = data.blobs.join('<br>');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+        
+        document.getElementById('deleteBlobsBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete all files? This cannot be undone.')) {
+                fetch('/delete-blobs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        alert('All files have been deleted.');
+                        document.getElementById('listBlobsBtn').click();
+                    } else {
+                        alert('An error occurred while attempting to delete files.');
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while attempting to delete files.');
+                });
+            }
+        });
+
+        // JavaScript for mobile menu toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navList = document.querySelector('.nav-list');
+
+        mobileMenu.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+
+        // Preview functionality
+        fileListDisplay.addEventListener('click', function(e) {
+            if (e.target.classList.contains('preview-btn')) {
+                const fileName = e.target.getAttribute('data-file');
+                const file = Array.from(fileInput.files).find(f => f.name === fileName);
+                if (file) {
+                    previewFile(file);
+                }
+            }
+        });
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+            if (hot) {
+                hot.destroy();
             }
         }
-    });
 
-    // Close modal events
-    closeBtn.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                if (hot) {
+                    hot.destroy();
+                }
+            }
         }
-    }
 
-    function handleFileSelection(e) {
-        fileList.innerHTML = '';
-        for (let file of e.target.files) {
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                <span>${file.name}</span>
-                <button class="preview-btn" data-file="${file.name}">Preview</button>
-            `;
-            fileList.appendChild(fileItem);
+        function previewFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
+                // Clear previous content
+                previewContent.innerHTML = '';
+
+                // Create a new div for Handsontable with the new class
+                const tableContainer = document.createElement('div');
+                tableContainer.className = 'handsontable-container';
+                previewContent.appendChild(tableContainer);
+
+                // Initialize Handsontable
+                hot = new Handsontable(tableContainer, {
+                    data: jsonData,
+                    rowHeaders: true,
+                    colHeaders: true,
+                    height: '100%',
+                    width: '100%',
+                    licenseKey: 'non-commercial-and-evaluation' // for non-commercial use
+                });
+
+                modal.style.display = "block";
+
+                // Refresh Handsontable after the modal is displayed
+                setTimeout(() => {
+                    hot.render();
+                }, 0);
+            };
+            reader.readAsArrayBuffer(file);
         }
-    }
-
-    function previewFile(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, {type: 'array'});
-            const firstSheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[firstSheetName];
-            const html = XLSX.utils.sheet_to_html(worksheet);
-            previewContent.innerHTML = html;
-            modal.style.display = "block";
-        };
-        reader.readAsArrayBuffer(file);
-    }
-});
     </script>
 </body>
 </html>
