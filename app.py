@@ -19,46 +19,36 @@ import pandas as pd
 from io import BytesIO
 import logging
 from logging.handlers import RotatingFileHandler
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__, static_url_path='', static_folder='static')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SECRET_KEY'] = '+A%&`LA*bq*5yvJ'  # Change this to a random secret key
 Session(app)
 
 # Azure Storage Account settings
-CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=salesreportingstacc;AccountKey=97+RZ/EBfDX+99pjcSX7i8j/bf50mzl+MyiGUyymQTO3jt2fVMh2Zg8XtQQxbOfcIuf5fsptr/Ei+AStYPe3WQ==;EndpointSuffix=core.windows.net"
+CONNECTION_STRING = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
 # Azure subscription ID
-subscription_id = '8c10f661-e991-47d6-85c8-50e6fe1af3e6'
-
-# rg_name
-rg_name = 'salesreportingapplication_group'
-
-# The data factory name. It must be globally unique.
-df_name = 'salesreportingappadf'
-
-# Specify your Active Directory client ID, client secret, and tenant ID
-credentials = ClientSecretCredential(client_id='259fe23b-6bf9-41d8-82bb-2d5cdb209949', client_secret='YourSecurePasswordHere', tenant_id='60956884-10ad-40fa-863d-4f32c1e3a37a') 
-
-resource_client = ResourceManagementClient(credentials, subscription_id)
-adf_client = DataFactoryManagementClient(credentials, subscription_id)
+subscription_id = os.getenv('AZURE_SUBSCRIPTION_ID')
 
 # Define the connection parameters
-server = 'salesreportingappdbserver.database.windows.net'
-database = 'salesreportingappdb'
-username = 'berlin'
-password = 'Youtube@123'
+server = os.getenv('DB_SERVER')
+database = os.getenv('DB_NAME')
+username = os.getenv('DB_USERNAME')
+password = os.getenv('DB_PASSWORD')
 
 # Construct the connection string
 DB_CONNECTION_STRING = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}'
 
 CONTAINER_NAME = 'salesrepblob'
-pipeline_postfix = 'Prod'
-pipelines_of_interest = ['Ingest Products Prod', 'Ingest Payments Prod', 'Ingest Customers Prod', 'Ingest Employees Prod', 'Ingest Transactions Prod']
 
 blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
 
-API_KEY = '8e8e05d2ba164b2a477e7b6874f2bbf7c49d1f93450b1fb352625b0587e479ca'
+API_KEY = os.getenv('TOGETHER_API_KEY')
 client = Together(api_key=API_KEY)
 
 def get_client_ip():

@@ -9,3 +9,4 @@ pandas
 together
 xlsxwriter
 Flask-Session
+python-dotenv==0.19.1
