@@ -41,6 +41,17 @@ database = os.getenv('DB_NAME')
 username = os.getenv('DB_USERNAME')
 password = os.getenv('DB_PASSWORD')
 
+# Azure credentials and subscription
+tenant_id = os.environ.get("AZURE_TENANT_ID")
+client_id = os.environ.get("AZURE_CLIENT_ID")
+client_secret = os.environ.get("AZURE_CLIENT_SECRET")
+subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
+
+# Data Factory details
+resource_group = os.environ.get("AZURE_RESOURCE_GROUP")
+factory_name = os.environ.get("AZURE_DATA_FACTORY_NAME")
+pipeline_name = os.environ.get("AZURE_PIPELINE_NAME")
+
 # Construct the connection string
 DB_CONNECTION_STRING = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}'
 
@@ -50,6 +61,22 @@ blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING
 
 API_KEY = os.getenv('TOGETHER_API_KEY')
 client = Together(api_key=API_KEY)
+
+credential = ClientSecretCredential(tenant_id, client_id, client_secret)
+adf_client = DataFactoryManagementClient(credential, subscription_id)
+
+pipelines_of_interest = [
+    'IngestProducts',
+    'IngestPayments',
+    'IngestCustomers',
+    'IngestEmployees',
+    'IngestTransactions',
+    'CalculateMonthlyCustomerMetrics',
+    'CalculateMonthlyProductMetrics',
+    'CalculateMonthlyPaymentMetrics',
+    'CalculateMonthlyEmployeeMetrics'
+    ]
+
 
 def get_client_ip():
     if request.headers.get('X-Forwarded-For'):
@@ -466,6 +493,41 @@ def run_edited_sql():
     except Exception as e:
         print(str(e))
         return jsonify(error=str(e))
+
+@app.route('/data_flow')
+def data_flow():
+    return render_template('data_flow.html')
+
+@app.route('/pipeline-status')
+def pipeline_status():
+    pipeline_runs = adf_client.pipeline_runs.query_by_factory(
+        resource_group,
+        factory_name,
+        {"lastUpdatedAfter": datetime.now() - timedelta(days=1), 
+         "lastUpdatedBefore": datetime.now() + timedelta(days=1)}
+    )
+
+    # Collect runs for each pipeline
+    runs_by_pipeline = {pipeline: [] for pipeline in pipelines_of_interest}
+    for run in pipeline_runs.value:
+        if run.pipeline_name in pipelines_of_interest:
+            runs_by_pipeline[run.pipeline_name].append(run)
+
+    user_timezone = request.args.get('timezone', 'UTC')
+    local_zone = pytz.timezone(user_timezone)
+
+    # Sort runs by last updated time and pick the latest
+    latest_runs = {}
+    for pipeline, runs in runs_by_pipeline.items():
+        if runs:
+            latest_run = sorted(runs, key=lambda x: x.last_updated, reverse=True)[0]
+            local_time = latest_run.last_updated.astimezone(local_zone)
+            latest_runs[pipeline] = {
+                'Status': latest_run.status,
+                'Last Updated': local_time.strftime("%Y-%m-%d %H:%M:%S")
+            }
+
+    return jsonify(latest_runs)
 
 if __name__ == '__main__':
     app.run(debug=True)
