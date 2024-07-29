@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        window.mermaid = mermaid;
+    </script>
     <style>
         .modal {
             display: none;
@@ -108,24 +112,23 @@
         }
 
         .preview-options {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 10px;
-}
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
 
-.preview-option {
-    margin-left: 10px;
-    padding: 5px 10px;
-    border: none;
-    background-color: #f0f0f0;
-    cursor: pointer;
-}
+        .preview-option {
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
 
-.preview-option.active {
-    background-color: #4CAF50;
-    color: white;
-}
-
+        .preview-option.active {
+            background-color: #4CAF50;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -151,19 +154,15 @@
     <div class="container">
         <h2>Files</h2>
         
-        <!-- List and Delete Old Files Section -->
-        <div class="section">
-            <div class="section-header">List and Delete Old Uploaded Files</div>
-            <p>Review and manage previously uploaded files. Use the list to check existing files and use the delete button to clear all files if needed.</p>
-            <button type="button" id="listBlobsBtn">List Current Files</button>
-            <div class="blob-list" id="blobsList">No files listed</div>
-            <button type="button" id="deleteBlobsBtn" class="delete-btn">Delete All Files</button>
-        </div>
-        
         <!-- Upload New Files Section -->
         <div class="section">
             <div class="section-header">Upload New Files</div>
             <p>Please select the dimension and fact table files to upload. You can drag and drop files into the area below or click to browse your files.</p>
+            <p>
+                <a href="#" id="dataModelLink" style="font-size: 0.8em">[View Data Model]</a>
+                <span style="margin: 0 10px;">|</span>
+                <a href="https://drive.google.com/drive/folders/1jkroPC4ibtWjQ3z9idkegrqqzO7YJb0Q?usp=drive_link" target="_blank" style="font-size: 0.8em">[View Sample Data]</a>
+            </p>
             <div id="dragWrapper" class="drag-area">
                 <input type="file" id="fileInput" multiple style="display: none;">
                 <p>Drag and drop files here or click to browse</p>
@@ -177,20 +176,75 @@
             </form>
         </div>
 
-    <!-- Preview Modal -->
-    <div id="previewModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">File Preview</h2>
-                <span class="close">&times;</span>
+        <!-- Preview Modal -->
+        <div id="previewModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">File Preview</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="preview-options">
+                    <button class="preview-option active" data-option="first20">View First 20 Rows</button>
+                    <button class="preview-option" data-option="full">View Full File</button>
+                </div>
+                <div id="previewContent"></div>
             </div>
-            <div class="preview-options">
-                <button class="preview-option active" data-option="first20">View First 20 Rows</button>
-                <button class="preview-option" data-option="full">View Full File</button>
-            </div>
-            <div id="previewContent"></div>
         </div>
-    </div>
+
+        <!-- Data Model Modal -->
+        <div id="dataModelModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="modal-mermaid-container">
+                    <pre class="mermaid" id="modal-mermaid">
+erDiagram
+    TRANSACTIONS ||--o{ PRODUCTS : contains
+    TRANSACTIONS ||--|| CUSTOMERS : involves
+    TRANSACTIONS ||--|| EMPLOYEES : processed_by
+    TRANSACTIONS ||--|| PAYMENTS : uses
+    TRANSACTIONS {
+        int transaction_id PK
+        datetime timestamp
+        int customer_id FK
+        int product_id FK
+        int employee_id FK
+        int payment_id FK
+        int quantity
+        decimal total_amount
+    }
+    PRODUCTS {
+        int product_id PK
+        string product_name
+        string product_category
+        decimal unit_price
+    }
+    PAYMENTS {
+        int payment_id PK
+        string payment_type
+    }
+    EMPLOYEES {
+        int employee_id PK
+        string employee_name
+        string employee_ssn
+        string employee_phone
+        string employee_state
+        string employee_city
+        string employee_postal
+    }
+    CUSTOMERS {
+        int customer_id PK
+        string customer_first_name
+        string customer_last_name
+        string customer_city
+        string customer_state
+        string customer_postal
+        string customer_email
+        string customer_phone
+    }
+                    </pre>
+                </div>
+            </div>
+        </div>
     
     </div>
     <script>
@@ -298,40 +352,6 @@
 
             xhr.send(formData);
         };
-        
-        document.getElementById('listBlobsBtn').addEventListener('click', function() {
-            fetch('/list-blobs')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.blobs.length === 0) {
-                        document.getElementById('blobsList').innerHTML = '<p>No files found.</p>';
-                    } else {
-                        document.getElementById('blobsList').innerHTML = data.blobs.join('<br>');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        });
-        
-        document.getElementById('deleteBlobsBtn').addEventListener('click', function() {
-            if (confirm('Are you sure you want to delete all files? This cannot be undone.')) {
-                fetch('/delete-blobs', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then(response => {
-                    if (response.ok) {
-                        alert('All files have been deleted.');
-                        document.getElementById('listBlobsBtn').click();
-                    } else {
-                        alert('An error occurred while attempting to delete files.');
-                    }
-                }).catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while attempting to delete files.');
-                });
-            }
-        });
 
         // JavaScript for mobile menu toggle
         const mobileMenu = document.getElementById('mobile-menu');
@@ -415,13 +435,22 @@
             });
         });
 
-        closeBtn.onclick = function() {
-            modal.style.display = "none";
-            if (hot) {
-                hot.destroy();
-            }
+// Data Model Modal functionality
+        var dataModelModal = document.getElementById("dataModelModal");
+        var dataModelLink = document.getElementById("dataModelLink");
+        var dataModelCloseBtn = dataModelModal.querySelector(".close");
+
+        dataModelLink.onclick = function(event) {
+            event.preventDefault();
+            dataModelModal.style.display = "block";
+            mermaid.init(undefined, document.querySelector(".mermaid"));
         }
 
+        dataModelCloseBtn.onclick = function() {
+            dataModelModal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modals, close them
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
@@ -429,7 +458,15 @@
                     hot.destroy();
                 }
             }
+            if (event.target == dataModelModal) {
+                dataModelModal.style.display = "none";
+            }
         }
+
+        // Initialize Mermaid
+        document.addEventListener("DOMContentLoaded", function () {
+            mermaid.initialize({ startOnLoad: false });
+        });
     </script>
 </body>
 </html>
